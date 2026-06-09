@@ -1137,8 +1137,8 @@ footer {
 body.lang-en-active .hero-title,
 body.lang-en-active .section-title,
 body.lang-en-active .approach-quote {
-  font-family: 'Cormorant Garamond', serif;
-  font-weight: 400;
+  font-family: 'Source Sans 3', sans-serif;
+  font-weight: 300;
   letter-spacing: 0.01em;
 }
 
@@ -1146,7 +1146,45 @@ body.lang-en-active .pillar-title,
 body.lang-en-active .service-name,
 body.lang-en-active .team-name,
 body.lang-en-active .news-title {
-  font-family: 'Cormorant Garamond', serif;
+  font-family: 'Source Sans 3', sans-serif;
+  font-weight: 600;
+}
+
+/* Source Sans 3 for all English body text */
+body.lang-en-active {
+  font-family: 'Source Sans 3', sans-serif;
+}
+
+body.lang-en-active .nav-links a,
+body.lang-en-active .nav-cta,
+body.lang-en-active .btn-primary,
+body.lang-en-active .btn-ghost,
+body.lang-en-active .hero-eyebrow,
+body.lang-en-active .hero-sub,
+body.lang-en-active .section-label,
+body.lang-en-active .service-desc,
+body.lang-en-active .service-link,
+body.lang-en-active .about-text p,
+body.lang-en-active .pillar-text,
+body.lang-en-active .team-bio,
+body.lang-en-active .team-role,
+body.lang-en-active .news-excerpt,
+body.lang-en-active .news-date,
+body.lang-en-active .info-label,
+body.lang-en-active .info-value,
+body.lang-en-active .form-label,
+body.lang-en-active .form-input,
+body.lang-en-active .form-textarea,
+body.lang-en-active .form-select,
+body.lang-en-active .footer-brand,
+body.lang-en-active .footer-copy,
+body.lang-en-active .lang-toggle,
+body.lang-en-active .social-btn {
+  font-family: 'Source Sans 3', sans-serif;
+}
+
+/* Light = 300, Regular = 400, Semibold = 600 — no fake bold */
+body.lang-en-active strong {
   font-weight: 600;
 }
 
