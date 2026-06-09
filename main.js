@@ -1,36 +1,77 @@
 /* ===========================
    LEVANT LAW FIRM — main.js
+   Bilingual AR / EN
    =========================== */
 
 'use strict';
 
-// ── Page Navigation ──────────────────────────────────────────────────────────
+/* ── Language State ─────────────────────────────────────────────────────── */
 
-/**
- * Show a page by id and update active nav link.
- * @param {string} id - page key: 'home' | 'about' | 'services' | 'team' | 'news' | 'contact'
- */
+var currentLang = 'ar';
+
+function applyLang(lang) {
+  currentLang = lang;
+  var isAr = lang === 'ar';
+
+  /* 1. html dir + lang */
+  var html = document.documentElement;
+  html.setAttribute('lang', isAr ? 'ar' : 'en');
+  html.setAttribute('dir', isAr ? 'rtl' : 'ltr');
+  html.setAttribute('data-lang', lang);
+
+  /* 2. All [data-ar] / [data-en] spans — render innerHTML */
+  document.querySelectorAll('[data-ar][data-en]').forEach(function (el) {
+    el.innerHTML = isAr ? el.dataset.ar : el.dataset.en;
+  });
+
+  /* 3. Placeholders with data-placeholder-ar / en */
+  document.querySelectorAll('[data-placeholder-ar]').forEach(function (el) {
+    el.placeholder = isAr ? el.dataset.placeholderAr : el.dataset.placeholderEn;
+  });
+
+  /* 4. <select> options that carry data-ar / data-en */
+  document.querySelectorAll('select option[data-ar]').forEach(function (opt) {
+    opt.textContent = isAr ? opt.dataset.ar : opt.dataset.en;
+  });
+
+  /* 5. Lang-toggle button visibility */
+  document.querySelectorAll('.lang-ar').forEach(function (el) {
+    el.style.display = isAr ? '' : 'none';
+  });
+  document.querySelectorAll('.lang-en').forEach(function (el) {
+    el.style.display = isAr ? 'none' : '';
+  });
+
+  /* 6. font — swap to Cormorant for English headings */
+  document.body.classList.toggle('lang-en-active', !isAr);
+
+  /* 7. Persist */
+  try { localStorage.setItem('levant_lang', lang); } catch(e) {}
+}
+
+function toggleLang() {
+  applyLang(currentLang === 'ar' ? 'en' : 'ar');
+}
+
+/* ── Page Navigation ──────────────────────────────────────────────────────── */
+
 function showPage(id) {
-  // Hide all pages
   document.querySelectorAll('.page').forEach(function (p) {
     p.classList.remove('active');
   });
 
-  // Show target page
   var target = document.getElementById('page-' + id);
   if (target) target.classList.add('active');
 
-  // Update nav link active state
   document.querySelectorAll('.nav-link').forEach(function (a) {
     a.classList.remove('active');
     if (a.dataset.page === id) a.classList.add('active');
   });
 
-  // Scroll to top
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-// ── Mobile Menu ───────────────────────────────────────────────────────────────
+/* ── Mobile Menu ─────────────────────────────────────────────────────────── */
 
 function toggleMobile() {
   var menu = document.getElementById('navMobile');
@@ -42,7 +83,6 @@ function closeMobile() {
   if (menu) menu.classList.remove('open');
 }
 
-// Close mobile menu when clicking outside
 document.addEventListener('click', function (e) {
   var menu   = document.getElementById('navMobile');
   var toggle = document.getElementById('navToggle');
@@ -51,21 +91,17 @@ document.addEventListener('click', function (e) {
   }
 });
 
-// ── Responsive Stats Grid ────────────────────────────────────────────────────
+/* ── Responsive Stats Grid ──────────────────────────────────────────────── */
 
 function updateStatsGrid() {
   var grid = document.querySelector('.stats-grid');
   if (!grid) return;
-  if (window.innerWidth < 600) {
-    grid.style.gridTemplateColumns = '1fr 1fr';
-  } else {
-    grid.style.gridTemplateColumns = 'repeat(4, 1fr)';
-  }
+  grid.style.gridTemplateColumns = window.innerWidth < 600 ? '1fr 1fr' : 'repeat(4,1fr)';
 }
 
 window.addEventListener('resize', updateStatsGrid);
 
-// ── Contact Form ──────────────────────────────────────────────────────────────
+/* ── Contact Form ────────────────────────────────────────────────────────── */
 
 function initContactForm() {
   var btn = document.getElementById('submitBtn');
@@ -76,46 +112,46 @@ function initContactForm() {
 
     var name    = document.getElementById('fieldName');
     var email   = document.getElementById('fieldEmail');
-    var phone   = document.getElementById('fieldPhone');
-    var service = document.getElementById('fieldService');
     var message = document.getElementById('fieldMessage');
+    var valid   = true;
 
-    // Simple validation
-    var valid = true;
-
-    [name, email, message].forEach(function (field) {
-      if (!field) return;
-      if (!field.value.trim()) {
-        field.style.borderColor = '#c0392b';
-        valid = false;
-      } else {
-        field.style.borderColor = '';
-      }
+    [name, email, message].forEach(function (f) {
+      if (!f) return;
+      if (!f.value.trim()) { f.style.borderColor = '#c0392b'; valid = false; }
+      else f.style.borderColor = '';
     });
 
     if (email && email.value && !email.value.includes('@')) {
-      email.style.borderColor = '#c0392b';
-      valid = false;
+      email.style.borderColor = '#c0392b'; valid = false;
     }
 
     if (!valid) {
-      showFormMessage('يرجى ملء جميع الحقول المطلوبة بشكل صحيح.', 'error');
+      showFormMessage(
+        currentLang === 'ar'
+          ? 'يرجى ملء جميع الحقول المطلوبة بشكل صحيح.'
+          : 'Please fill in all required fields correctly.',
+        'error'
+      );
       return;
     }
 
-    // Simulate sending (replace with real fetch to your backend)
-    btn.disabled = true;
-    btn.textContent = 'جارٍ الإرسال…';
+    btn.disabled    = true;
+    btn.querySelector('[data-ar]').innerHTML =
+      currentLang === 'ar' ? 'جارٍ الإرسال…' : 'Sending…';
 
     setTimeout(function () {
-      showFormMessage('تم إرسال طلبك بنجاح. سنتواصل معك قريباً.', 'success');
-      btn.disabled   = false;
-      btn.textContent = 'إرسال الاستفسار';
-      if (name)    name.value    = '';
-      if (email)   email.value   = '';
-      if (phone)   phone.value   = '';
-      if (service) service.value = '';
-      if (message) message.value = '';
+      showFormMessage(
+        currentLang === 'ar'
+          ? 'تم إرسال طلبك بنجاح. سنتواصل معك قريباً.'
+          : 'Your enquiry has been sent. We will be in touch shortly.',
+        'success'
+      );
+      btn.disabled = false;
+      applyLang(currentLang); // restore button text
+      ['fieldName','fieldEmail','fieldPhone','fieldService','fieldMessage'].forEach(function(id){
+        var el = document.getElementById(id);
+        if (el) el.value = '';
+      });
     }, 1200);
   });
 }
@@ -128,19 +164,18 @@ function showFormMessage(text, type) {
   msg.id = 'formMsg';
   msg.textContent = text;
   msg.style.cssText = [
-    'padding: 12px 16px',
-    'font-size: 13px',
-    'margin-top: 0.5rem',
-    'border-right: 3px solid ' + (type === 'success' ? '#1b4332' : '#c0392b'),
-    'background: ' + (type === 'success' ? 'rgba(27,67,50,0.06)' : 'rgba(192,57,43,0.06)'),
-    'color: ' + (type === 'success' ? '#1b4332' : '#c0392b'),
-    'transition: opacity 0.3s',
+    'padding:12px 16px',
+    'font-size:13px',
+    'margin-top:0.5rem',
+    'border-right:3px solid ' + (type === 'success' ? '#1b4332' : '#c0392b'),
+    'background:' + (type === 'success' ? 'rgba(27,67,50,0.06)' : 'rgba(192,57,43,0.06)'),
+    'color:' + (type === 'success' ? '#1b4332' : '#c0392b'),
+    'transition:opacity 0.3s'
   ].join(';');
 
   var form = document.querySelector('.contact-form');
   if (form) form.appendChild(msg);
 
-  // Auto-hide after 5 seconds
   setTimeout(function () {
     if (msg.parentNode) {
       msg.style.opacity = '0';
@@ -149,53 +184,39 @@ function showFormMessage(text, type) {
   }, 5000);
 }
 
-// ── Nav link data-page wiring ─────────────────────────────────────────────────
+/* ── Nav link wiring ─────────────────────────────────────────────────────── */
 
 function initNavLinks() {
   document.querySelectorAll('[data-page]').forEach(function (el) {
     el.addEventListener('click', function (e) {
       e.preventDefault();
-      var page = el.dataset.page;
-      showPage(page);
+      showPage(el.dataset.page);
       closeMobile();
     });
   });
 }
 
-// ── Init ──────────────────────────────────────────────────────────────────────
-
-document.addEventListener('DOMContentLoaded', function () {
-  updateStatsGrid();
-  initContactForm();
-  initNavLinks();
-});
-
-// ── Animated Number Counters ─────────────────────────────────────────────────
+/* ── Animated Number Counters ───────────────────────────────────────────── */
 
 function animateCounters(scope) {
   var els = (scope || document).querySelectorAll('.animate-count .stat-num[data-target]');
   els.forEach(function (el) {
-    var target  = parseInt(el.dataset.target, 10);
-    var prefix  = el.dataset.prefix || '';
+    var target   = parseInt(el.dataset.target, 10);
+    var prefix   = el.dataset.prefix || '';
     var duration = 1400;
-    var start   = null;
+    var start    = null;
 
     function step(ts) {
       if (!start) start = ts;
       var progress = Math.min((ts - start) / duration, 1);
-      // Ease out cubic
-      var ease = 1 - Math.pow(1 - progress, 3);
-      var current = Math.floor(ease * target);
-      el.textContent = prefix + current;
+      var ease     = 1 - Math.pow(1 - progress, 3);
+      el.textContent = prefix + Math.floor(ease * target);
       if (progress < 1) requestAnimationFrame(step);
       else el.textContent = prefix + target;
     }
-
     requestAnimationFrame(step);
   });
 }
-
-// ── Intersection Observer for counters ───────────────────────────────────────
 
 function initCounterObserver() {
   if (!window.IntersectionObserver) return;
@@ -213,27 +234,29 @@ function initCounterObserver() {
   });
 }
 
-// ── Re-trigger stagger on page change ────────────────────────────────────────
+/* ── Re-trigger stagger + counters on page change ───────────────────────── */
 
 var _origShowPage = showPage;
 showPage = function (id) {
   _origShowPage(id);
-  // Re-trigger stagger by forcing reflow
   var page = document.getElementById('page-' + id);
   if (!page) return;
-  var staggerEls = page.querySelectorAll('.stagger-in');
-  staggerEls.forEach(function (el) {
+  page.querySelectorAll('.stagger-in').forEach(function (el) {
     el.style.animation = 'none';
-    el.offsetHeight; // reflow
+    el.offsetHeight;
     el.style.animation = '';
   });
-  // Re-trigger counters on about and home pages
   setTimeout(function () { animateCounters(page); }, 200);
 };
 
-// ── Init ──────────────────────────────────────────────────────────────────────
+/* ── Init ────────────────────────────────────────────────────────────────── */
 
 document.addEventListener('DOMContentLoaded', function () {
+  /* Restore saved language or default AR */
+  var saved = 'ar';
+  try { saved = localStorage.getItem('levant_lang') || 'ar'; } catch(e) {}
+  applyLang(saved);
+
   updateStatsGrid();
   initContactForm();
   initNavLinks();
