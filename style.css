@@ -1435,20 +1435,160 @@ html[dir="ltr"] .whatsapp-float {
   .about-visual { min-height: 320px; }
 }
 
-/* ── Lang toggle spans ── */
+/* ══════════════════════════════════════
+   WHY LEVANT PAGE
+   ══════════════════════════════════════ */
+
+/* Hero */
+.why-hero {
+  background: var(--bg2);
+  border-bottom: 1px solid var(--border);
+  padding: 5rem 2rem 4rem;
+  text-align: center;
+}
+.why-hero-inner {
+  max-width: 680px;
+  margin: 0 auto;
+}
+.why-hero-sub {
+  font-size: 16px;
+  color: var(--muted);
+  line-height: 1.9;
+  margin-top: 1.2rem;
+}
+
+/* Grid */
+.why-grid-section { padding-top: 4rem; padding-bottom: 3rem; }
+.why-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
+  background: var(--border);
+}
+
+.why-card {
+  background: var(--bg);
+  padding: 2.2rem 1.8rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  transition: background 0.3s;
+  position: relative;
+  overflow: hidden;
+}
+.why-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(to right, var(--green-mid), var(--gold));
+  transform: scaleX(0);
+  transition: transform 0.4s;
+}
+.why-card:hover { background: var(--surface); }
+.why-card:hover::before { transform: scaleX(1); }
+
+.why-icon {
+  font-size: 28px;
+  line-height: 1;
+  margin-bottom: 0.2rem;
+}
+.why-title {
+  font-family: 'Tajawal', sans-serif;
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--green);
+  line-height: 1.4;
+}
+.why-desc {
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.8;
+}
+
+/* Values strip */
+.why-values-strip {
+  background: var(--green);
+  padding: 2rem;
+}
+.why-values-inner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  max-width: 800px;
+  margin: 0 auto;
+}
+.why-value-word {
+  font-family: 'Tajawal', sans-serif;
+  font-size: 15px;
+  font-weight: 500;
+  color: rgba(255,255,255,0.9);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+.why-value-dot {
+  color: var(--gold);
+  font-size: 8px;
+  opacity: 0.7;
+}
+
+/* CTA */
+.why-cta-section { padding: 5rem 2rem; }
+.why-cta-box {
+  max-width: 580px;
+  margin: 0 auto;
+  text-align: center;
+  border: 1px solid var(--border-gold);
+  padding: 3.5rem 3rem;
+  position: relative;
+}
+.why-cta-box::before {
+  content: '';
+  position: absolute;
+  inset: 6px;
+  border: 0.5px solid var(--border-gold);
+  opacity: 0.3;
+  pointer-events: none;
+}
+.why-cta-title {
+  font-family: 'Tajawal', sans-serif;
+  font-size: 28px;
+  font-weight: 600;
+  color: var(--green);
+  margin-bottom: 1rem;
+}
+.why-cta-sub {
+  font-size: 15px;
+  color: var(--muted);
+  line-height: 1.9;
+  margin-bottom: 2rem;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .why-grid { grid-template-columns: 1fr 1fr; }
+  .why-cta-box { padding: 2.5rem 1.5rem; }
+}
+@media (max-width: 600px) {
+  .why-grid { grid-template-columns: 1fr; }
+  .why-values-inner { gap: 1rem; }
+}
+
+/* Lang spans */
 .lang-en { display: none; }
 .lang-ar { display: inline; }
 body.lang-en-active .lang-en { display: inline; }
 body.lang-en-active .lang-ar { display: none; }
 
-/* ── Read More / Collapse ── */
+/* Read More */
 .service-desc.collapsed {
   max-height: 4.8em;
   overflow: hidden;
   -webkit-mask-image: linear-gradient(to bottom, black 50%, transparent 100%);
   mask-image: linear-gradient(to bottom, black 50%, transparent 100%);
 }
-
 .service-desc.expanded {
   max-height: 600px;
   overflow: hidden;
@@ -1456,7 +1596,6 @@ body.lang-en-active .lang-ar { display: none; }
   mask-image: none;
   transition: max-height 0.4s cubic-bezier(0.23,1,0.32,1);
 }
-
 .read-more-btn {
   display: inline-block !important;
   opacity: 1 !important;
@@ -1474,12 +1613,9 @@ body.lang-en-active .lang-ar { display: none; }
 }
 .read-more-btn:hover { opacity: 0.7 !important; }
 
-/* ── Service card equal height ── */
+/* Equal height service cards */
 .services-grid,
-.services-grid-full {
-  align-items: stretch;
-}
-
+.services-grid-full { align-items: stretch; }
 .service-card {
   display: flex;
   flex-direction: column;
