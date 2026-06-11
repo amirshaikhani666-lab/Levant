@@ -5,6 +5,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Levant Law Firm | ليفانت للمحاماة</title>
   <meta name="description" content="Levant Law Firm — Specialists in International Organizations, Commercial Arbitration & Corporate Law in Damascus, Syria.">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Levant Law Firm | ليفانت للمحاماة">
+  <meta property="og:description" content="Specialists in International Organizations, Commercial Arbitration & Corporate Law in Damascus, Syria.">
+  <meta property="og:image" content="Artboard 1.png">
+  <meta property="og:locale" content="ar_SY">
+  <meta property="og:locale:alternate" content="en_US">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Levant Law Firm | ليفانت للمحاماة">
+  <meta name="twitter:image" content="Artboard 1.png">
   <link rel="icon" type="image/x-icon" href="favicon.ico">
   <link rel="icon" type="image/png" sizes="32x32" href="TAP.png">
   <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
@@ -20,7 +29,9 @@
 <!-- ===== NAV ===== -->
 <nav id="mainNav">
   <div class="logo">
-    <img src="PNG.png" alt="Levant Law Firm">
+    <a href="#" data-page="home" style="display:block;line-height:0;">
+      <img src="PNG.png" alt="Levant Law Firm">
+    </a>
   </div>
 
   <ul class="nav-links">
@@ -49,6 +60,7 @@
 
 <!-- Mobile Menu -->
 <div class="nav-mobile" id="navMobile">
+  <button class="nav-mobile-close" onclick="toggleMobile()" aria-label="Close menu">✕</button>
   <a href="#" data-page="home"><span data-ar="الرئيسية" data-en="Home"></span></a>
   <a href="#" data-page="about"><span data-ar="من نحن" data-en="About"></span></a>
   <a href="#" data-page="services"><span data-ar="خدماتنا" data-en="Services"></span></a>
@@ -87,7 +99,7 @@
       <span data-ar="خدمات قانونية<br>بُنيت على <em>الدقة</em><br>والنزاهة" data-en="Legal Services<br>Built on <em>Precision</em><br>& Integrity"></span>
     </h1>
     <p class="hero-sub animate-fade-up" style="animation-delay:0.5s">
-      <span data-ar="متخصصون في المنظمات الدولية والتحكيم التجاري وقانون الشركات — نقدم حلولاً قانونية استراتيجية في سوريا والمنطقة." data-en="Specialists in International Organizations, Commercial Arbitration & Corporate Law — delivering strategic legal solutions across Syria and the region."></span>
+      <span data-ar="متخصصون في قانون الشركات , التحكيم التجاري والقانون المدني و المنظمات الدولية والمؤسسات الخيرية — نقدم حلولاً قانونية استراتيجية في سوريا والمنطقة." data-en="Specialists in corporate law, commercial arbitration, civil law, international organizations and charities — we provide strategic legal solutions in Syria and the region."></span>
     </p>
     <div class="hero-btns animate-fade-up" style="animation-delay:0.65s">
       <a href="#" class="btn-primary" data-page="services"><span data-ar="اكتشف خدماتنا" data-en="Our Services"></span></a>
@@ -111,20 +123,20 @@
       <div class="services-grid">
         <div class="service-card stagger-in" style="--i:0">
           <div class="service-num">01</div>
-          <div class="service-name"><span data-ar="المنظمات الدولية" data-en="International Organizations"></span></div>
-          <div class="service-desc"><span data-ar="خدمات استشارية وتمثيلية للهيئات متعددة الأطراف والمنظمات غير الحكومية والمنظمات الحكومية الدولية." data-en="Advisory and representational services for multilateral bodies, NGOs, and inter-governmental organizations."></span></div>
+          <div class="service-name"><span data-ar="قانون الشركات" data-en="Corporate Law"></span></div>
+          <div class="service-desc"><span data-ar="حوكمة الشركات وعمليات الاندماج والاستحواذ والامتثال التنظيمي للشركات العاملة في منطقة الشام." data-en="Corporate governance, mergers & acquisitions and regulatory compliance for businesses operating in the Levant region."></span></div>
           <button class="service-link" data-page="services"><span data-ar="اعرف أكثر ←" data-en="Learn More →"></span></button>
         </div>
         <div class="service-card stagger-in" style="--i:1">
           <div class="service-num">02</div>
-          <div class="service-name"><span data-ar="التحكيم التجاري" data-en="Commercial Arbitration"></span></div>
-          <div class="service-desc"><span data-ar="تسوية النزاعات الاستراتيجية عبر ICC وDIAC ومؤسسات التحكيم الإقليمية في النزاعات العابرة للحدود." data-en="Strategic dispute resolution through ICC, DIAC and regional arbitration institutions for cross-border disputes."></span></div>
+          <div class="service-name"><span data-ar="القانون المدني" data-en="Civil Law"></span></div>
+          <div class="service-desc"><span data-ar="نقدّم استشارات قانونية متخصصة في مختلف مسائل القانون المدني السوري، بما يشمل العقود، والالتزامات، والمسؤولية المدنية، وحقوق الملكية. نساعد عملاءنا على حماية حقوقهم وتسوية النزاعات القانونية بكفاءة، مع تقديم حلول قانونية دقيقة تتوافق مع التشريعات السورية النافذة." data-en="We provide specialized legal services in all areas of Syrian Civil Law, including contracts, obligations, civil liability, and property rights. Our team assists clients in protecting their legal interests, resolving disputes efficiently, and delivering practical legal solutions in accordance with applicable Syrian legislation."></span></div>
           <button class="service-link" data-page="services"><span data-ar="اعرف أكثر ←" data-en="Learn More →"></span></button>
         </div>
         <div class="service-card stagger-in" style="--i:2">
           <div class="service-num">03</div>
-          <div class="service-name"><span data-ar="قانون الشركات" data-en="Corporate Law"></span></div>
-          <div class="service-desc"><span data-ar="حوكمة الشركات وعمليات الاندماج والاستحواذ والامتثال التنظيمي للشركات العاملة في منطقة الشام." data-en="Corporate governance, mergers & acquisitions and regulatory compliance for businesses operating in the Levant region."></span></div>
+          <div class="service-name"><span data-ar="التحكيم التجاري" data-en="Commercial Arbitration"></span></div>
+          <div class="service-desc"><span data-ar="تسوية النزاعات الاستراتيجية عبر ICC وDIAC ومؤسسات التحكيم الإقليمية في النزاعات العابرة للحدود." data-en="Strategic dispute resolution through ICC, DIAC and regional arbitration institutions for cross-border disputes."></span></div>
           <button class="service-link" data-page="services"><span data-ar="اعرف أكثر ←" data-en="Learn More →"></span></button>
         </div>
       </div>
@@ -209,40 +221,59 @@
       <div class="services-grid services-grid-full">
         <div class="service-card stagger-in" style="--i:0">
           <div class="service-num">01</div>
-          <div class="service-name"><span data-ar="المنظمات الدولية" data-en="International Organizations"></span></div>
-          <div class="service-desc"><span data-ar="خدمات استشارية وتمثيلية للهيئات متعددة الأطراف والمنظمات غير الحكومية والمنظمات الحكومية الدولية." data-en="Advisory and representational services for multilateral bodies, NGOs and inter-governmental organizations."></span></div>
-          <button class="service-link" data-page="contact"><span data-ar="تواصل معنا ←" data-en="Contact Us →"></span></button>
+          <div class="service-name"><span data-ar="قانون الشركات" data-en="Corporate Law"></span></div>
+          <div class="service-desc"><span data-ar="حوكمة الشركات وعمليات الاندماج والاستحواذ والامتثال التنظيمي للشركات العاملة في منطقة الشام." data-en="Corporate governance, mergers & acquisitions and regulatory compliance for businesses operating in the Levant region."></span></div>
+          <button class="service-link read-more-btn" onclick="toggleReadMore(this)"><span data-ar="اقرأ المزيد ↓" data-en="Read More ↓"></span></button>
         </div>
         <div class="service-card stagger-in" style="--i:1">
           <div class="service-num">02</div>
-          <div class="service-name"><span data-ar="التحكيم التجاري" data-en="Commercial Arbitration"></span></div>
-          <div class="service-desc"><span data-ar="تسوية النزاعات الاستراتيجية عبر ICC وDIAC ومؤسسات التحكيم الإقليمية في النزاعات العابرة للحدود." data-en="Strategic dispute resolution through ICC, DIAC and regional arbitration institutions for cross-border disputes."></span></div>
-          <button class="service-link" data-page="contact"><span data-ar="تواصل معنا ←" data-en="Contact Us →"></span></button>
+          <div class="service-name"><span data-ar="القانون المدني" data-en="Civil Law"></span></div>
+          <div class="service-desc"><span data-ar="نقدّم استشارات قانونية متخصصة في مختلف مسائل القانون المدني السوري، بما يشمل العقود، والالتزامات، والمسؤولية المدنية، وحقوق الملكية. نساعد عملاءنا على حماية حقوقهم وتسوية النزاعات القانونية بكفاءة، مع تقديم حلول قانونية دقيقة تتوافق مع التشريعات السورية النافذة." data-en="We provide specialized legal services in all areas of Syrian Civil Law, including contracts, obligations, civil liability, and property rights. Our team assists clients in protecting their legal interests, resolving disputes efficiently, and delivering practical legal solutions in accordance with applicable Syrian legislation."></span></div>
+          <button class="service-link read-more-btn" onclick="toggleReadMore(this)"><span data-ar="اقرأ المزيد ↓" data-en="Read More ↓"></span></button>
         </div>
         <div class="service-card stagger-in" style="--i:2">
           <div class="service-num">03</div>
-          <div class="service-name"><span data-ar="قانون الشركات" data-en="Corporate Law"></span></div>
-          <div class="service-desc"><span data-ar="حوكمة الشركات وعمليات الاندماج والاستحواذ والامتثال التنظيمي للشركات العاملة في منطقة الشام." data-en="Corporate governance, M&A and regulatory compliance for businesses operating in the Levant region."></span></div>
-          <button class="service-link" data-page="contact"><span data-ar="تواصل معنا ←" data-en="Contact Us →"></span></button>
+          <div class="service-name"><span data-ar="التحكيم التجاري" data-en="Commercial Arbitration"></span></div>
+          <div class="service-desc"><span data-ar="تسوية النزاعات الاستراتيجية عبر ICC وDIAC ومؤسسات التحكيم الإقليمية في النزاعات العابرة للحدود." data-en="Strategic dispute resolution through ICC, DIAC and regional arbitration institutions for cross-border disputes."></span></div>
+          <button class="service-link read-more-btn" onclick="toggleReadMore(this)"><span data-ar="اقرأ المزيد ↓" data-en="Read More ↓"></span></button>
         </div>
         <div class="service-card stagger-in" style="--i:3">
           <div class="service-num">04</div>
-          <div class="service-name"><span data-ar="قانون العمل" data-en="Employment Law"></span></div>
-          <div class="service-desc"><span data-ar="تقديم المشورة في عقود العمل والنزاعات العمالية وإعادة الهيكلة المؤسسية وفق أحدث التشريعات العمالية." data-en="Advising on employment contracts, labour disputes and institutional restructuring under the latest labour legislation."></span></div>
-          <button class="service-link" data-page="contact"><span data-ar="تواصل معنا ←" data-en="Contact Us →"></span></button>
+          <div class="service-name"><span data-ar="القانون الجمركي" data-en="Customs Law"></span></div>
+          <div class="service-desc"><span data-ar="نقدّم خدمات قانونية متخصصة في مجال القانون الجمركي السوري، تشمل قضايا الاستيراد والتصدير، والامتثال للأنظمة الجمركية، وتسوية المنازعات الجمركية، ومتابعة الإجراءات الإدارية ذات الصلة. نساعد عملاءنا على حماية مصالحهم التجارية وضمان الالتزام بالتشريعات والأنظمة الجمركية النافذة في الجمهورية العربية السورية.." data-en="We provide legal assistance in matters related to Syrian Customs Law, including import and export regulations, customs compliance, customs disputes, and administrative procedures. Our team helps clients navigate customs requirements, protect their commercial interests, and ensure compliance with applicable customs legislation and regulations in Syria."></span></div>
+          <button class="service-link read-more-btn" onclick="toggleReadMore(this)"><span data-ar="اقرأ المزيد ↓" data-en="Read More ↓"></span></button>
         </div>
         <div class="service-card stagger-in" style="--i:4">
           <div class="service-num">05</div>
-          <div class="service-name"><span data-ar="العقارات والاستثمار" data-en="Real Estate & Investment"></span></div>
-          <div class="service-desc"><span data-ar="الاستشارات القانونية في صفقات العقارات والاستثمارات العقارية وتوثيق العقود وتسوية النزاعات المتعلقة بالملكية." data-en="Legal counsel on real estate transactions, property investments, contract documentation and property dispute resolution."></span></div>
-          <button class="service-link" data-page="contact"><span data-ar="تواصل معنا ←" data-en="Contact Us →"></span></button>
+          <div class="service-name"><span data-ar="قانون الأحوال الشخصية" data-en="Personal Status Law"></span></div>
+          <div class="service-desc"><span data-ar="نقدّم خدمات قانونية متخصصة في قضايا الأحوال الشخصية وفق التشريعات السورية، بما يشمل الزواج والطلاق والنفقة والحضانة والوصاية والميراث. نحرص على تقديم استشارات قانونية دقيقة وتمثيل فعّال يضمن حماية حقوق عملائنا وتحقيق أفضل النتائج القانونية الممكنة.." data-en="We provide specialized legal services in matters related to Syrian Personal Status Law, including marriage, divorce, alimony, child custody, guardianship, and inheritance. Our team is committed to delivering accurate legal advice and effective representation to protect our clients' rights and achieve the best possible legal outcomes."></span></div>
+          <button class="service-link read-more-btn" onclick="toggleReadMore(this)"><span data-ar="اقرأ المزيد ↓" data-en="Read More ↓"></span></button>
         </div>
         <div class="service-card stagger-in" style="--i:5">
           <div class="service-num">06</div>
-          <div class="service-name"><span data-ar="الاستشارات القانونية الدولية" data-en="International Legal Consulting"></span></div>
-          <div class="service-desc"><span data-ar="تقديم الرأي القانوني للشركات والأفراد في القضايا العابرة للحدود، وتفسير المعاهدات والاتفاقيات الدولية ذات الصلة بنشاطهم." data-en="Providing legal opinions to companies and individuals on cross-border matters, interpreting treaties and international conventions relevant to their operations."></span></div>
-          <button class="service-link" data-page="contact"><span data-ar="تواصل معنا ←" data-en="Contact Us →"></span></button>
+          <div class="service-name"><span data-ar="القانون الإداري" data-en="Administrative Law"></span></div>
+          <div class="service-desc"><span data-ar="نقدّم خدمات قانونية متخصصة في مجال القانون الإداري، تشمل المنازعات الإدارية، والطعن في القرارات الإدارية، والعقود الإدارية، وقضايا الموظفين في القطاع العام. نساعد عملاءنا على حماية حقوقهم أمام الجهات الإدارية والقضائية من خلال استشارات قانونية دقيقة وتمثيل قانوني فعّال." data-en="We provide specialized legal services in Administrative Law, including administrative disputes, challenges to administrative decisions, public contracts, and public sector employment matters. Our team assists clients in protecting their rights before administrative authorities and courts through strategic legal advice and effective representation."></span></div>
+          <button class="service-link read-more-btn" onclick="toggleReadMore(this)"><span data-ar="اقرأ المزيد ↓" data-en="Read More ↓"></span></button>
         </div>
+           <div class="service-card stagger-in" style="--i:6">
+          <div class="service-num">07</div>
+          <div class="service-name"><span data-ar="المنظمات الدولية" data-en="International Organizations"></span></div>
+          <div class="service-desc"><span data-ar="خدمات استشارية وتمثيلية للهيئات متعددة الأطراف والمنظمات غير الحكومية و المؤسسات الخيرية غير الربحية." data-en="Advisory and legal representation services for multilateral organizations, non-governmental organizations (NGOs), and non-profit charitable institutions."></span></div>
+          <button class="service-link read-more-btn" onclick="toggleReadMore(this)"><span data-ar="اقرأ المزيد ↓" data-en="Read More ↓"></span></button>
+        </div>
+           <div class="service-card stagger-in" style="--i:7">
+          <div class="service-num">08</div>
+          <div class="service-name"><span data-ar="العقارات والاستثمار" data-en="Real Estate and Investment"></span></div>
+          <div class="service-desc"><span data-ar="الاستشارات القانونية في صفقات العقارات والاستثمارات العقارية وتوثيق العقود وتسوية النزاعات المتعلقة بالملكية" data-en="Legal advisory services for real estate transactions and property investments, including contract drafting and authentication, as well as the resolution of ownership-related disputes."></span></div>
+          <button class="service-link read-more-btn" onclick="toggleReadMore(this)"><span data-ar="اقرأ المزيد ↓" data-en="Read More ↓"></span></button>
+        </div>
+           <div class="service-card stagger-in" style="--i:8">
+          <div class="service-num">09</div>
+          <div class="service-name"><span data-ar="الاستشارات القانونية الدولية" data-en="International Legal Consulting"></span></div>
+          <div class="service-desc"><span data-ar="تقديم الرأي القانوني للشركات والأفراد في القضايا العابرة للحدود، وتفسير المعاهدات والاتفاقيات الدولية ذات الصلة بنشاطهم." data-en="Providing legal opinions and advisory services to companies and individuals in cross-border matters, including the interpretation of international treaties and agreements relevant to their activities."></span></div>
+          <button class="service-link read-more-btn" onclick="toggleReadMore(this)"><span data-ar="اقرأ المزيد ↓" data-en="Read More ↓"></span></button>
+        </div>
+        
       </div>
     </div>
   </section>
