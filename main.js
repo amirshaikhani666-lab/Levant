@@ -187,3 +187,36 @@ function initReadMore() {
     desc.classList.add('collapsed');
   });
 }
+
+/* ── Back To Top ── */
+function scrollToTop() {
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+window.addEventListener('scroll', function() {
+  var btn = document.getElementById('backToTop');
+  if (!btn) return;
+  if (window.scrollY > 400) {
+    btn.classList.add('visible');
+  } else {
+    btn.classList.remove('visible');
+  }
+});
+
+/* ── News Read More Toggle ── */
+function toggleNews(btn) {
+  var excerpt = btn.previousElementSibling;
+  if (!excerpt) return;
+  var isExpanded = excerpt.classList.contains('news-expanded');
+  var span = btn.querySelector('span');
+
+  if (isExpanded) {
+    excerpt.classList.remove('news-expanded');
+    excerpt.classList.add('news-collapsed');
+    if (span) span.textContent = currentLang === 'ar' ? 'اقرأ المزيد ←' : 'Read More →';
+  } else {
+    excerpt.classList.remove('news-collapsed');
+    excerpt.classList.add('news-expanded');
+    if (span) span.textContent = currentLang === 'ar' ? 'إخفاء ↑' : 'Show Less ↑';
+  }
+}
