@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>حسابات المحامي</title>
+<title>المحامي مهند محمد نطفجي</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
@@ -138,10 +138,18 @@
   .tab-body{padding:20px 24px 28px;}
 
   .entry-form{
-    display:grid;grid-template-columns:130px 1fr 120px 130px;gap:10px;margin-bottom:16px;
+    display:grid;grid-template-columns:125px 1fr 110px 100px 130px;gap:10px;margin-bottom:16px;
     background:var(--paper);border:1px solid var(--line);border-radius:6px;padding:14px;
   }
   @media (max-width:700px){.entry-form{grid-template-columns:1fr 1fr;}}
+  .cur-balance-table{margin:0;}
+  .cur-balance-table th, .cur-balance-table td{text-align:center;}
+  .cur-balance-table td.cur-name{font-weight:700;color:var(--navy-900);text-align:right;}
+  .cur-balance-table td.bal-pos{color:var(--green);}
+  .cur-balance-table td.bal-neg{color:var(--red);}
+  .amount-cell.bal-pos{color:var(--green);}
+  .amount-cell.bal-neg{color:var(--red);}
+  .cur-tag{font-size:11px;color:var(--ink-soft);font-weight:600;}
   .entry-form input, .entry-form select{
     font-family:inherit;font-size:13px;padding:9px 10px;border:1px solid var(--line);
     border-radius:4px;background:#fff;color:var(--ink);width:100%;
@@ -313,7 +321,7 @@
     <div class="brand">
       <img class="brand-mark" id="brandLogo" alt="شعار المكتب">
       <div>
-        <h1 id="firmTitle">حسابات المحامي</h1>
+        <h1 id="firmTitle"> </h1>
         <p>سجل الموكلين، الدفعات المستحقة، والمصروفات</p>
       </div>
     </div>
@@ -463,16 +471,27 @@ async function loadState(){
   }
 
   state.clients = (clients||[]).map(c=>({ id:c.id, name:c.name, phone:c.phone, note:c.note }));
-  state.payments = (payments||[]).map(p=>({ id:p.id, clientId:p.client_id, date:p.date, method:p.method, amount:p.amount, note:p.note }));
-  state.expenses = (expenses||[]).map(e=>({ id:e.id, clientId:e.client_id, date:e.date, description:e.description, amount:e.amount, note:e.note, work:e.work }));
+  state.payments = (payments||[]).map(p=>({ id:p.id, clientId:p.client_id, date:p.date, method:p.method, amount:p.amount, note:p.note, currency: normCur(p.currency) }));
+  state.expenses = (expenses||[]).map(e=>({ id:e.id, clientId:e.client_id, date:e.date, description:e.description, amount:e.amount, note:e.note, work:e.work, currency: normCur(e.currency) }));
 
   render();
 }
 
+/* ================= Currencies ================= */
+const CURRENCIES = {
+  SYP: { symbol: 'ل.س', label: 'ليرة سورية', decimals: 0 },
+  USD: { symbol: '$',   label: 'دولار أمريكي', decimals: 2 },
+  EUR: { symbol: '€',   label: 'يورو',        decimals: 2 }
+};
+function normCur(cur){ return (cur && CURRENCIES[cur]) ? cur : 'USD'; }
+
 /* ================= Helpers ================= */
-function fmt(n){
+function fmt(n, currency){
+  currency = normCur(currency);
+  const c = CURRENCIES[currency];
   const num = Number(n)||0;
-  return '$' + num.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2});
+  const formatted = num.toLocaleString('en-US', {minimumFractionDigits:c.decimals, maximumFractionDigits:c.decimals});
+  return currency === 'SYP' ? (formatted + ' ' + c.symbol) : (c.symbol + formatted);
 }
 function todayISO(){ return new Date().toISOString().slice(0,10); }
 function showToast(msg){
@@ -482,9 +501,13 @@ function showToast(msg){
   setTimeout(()=>t.classList.remove('show'), 2200);
 }
 function clientBalance(clientId){
-  const due = state.payments.filter(p=>p.clientId===clientId).reduce((s,p)=>s+Number(p.amount||0),0);
-  const paid = state.expenses.filter(e=>e.clientId===clientId).reduce((s,e)=>s+Number(e.amount||0),0);
-  return { due, paid, balance: due - paid };
+  const result = {};
+  Object.keys(CURRENCIES).forEach(cur=>{
+    const due = state.payments.filter(p=>p.clientId===clientId && normCur(p.currency)===cur).reduce((s,p)=>s+Number(p.amount||0),0);
+    const paid = state.expenses.filter(e=>e.clientId===clientId && normCur(e.currency)===cur).reduce((s,e)=>s+Number(e.amount||0),0);
+    result[cur] = { due, paid, balance: due - paid };
+  });
+  return result;
 }
 
 /* ================= Rendering: client list ================= */
@@ -501,12 +524,17 @@ function renderClientList(){
   }
   ul.innerHTML = state.clients.map(c=>{
     const b = clientBalance(c.id);
-    const cls = b.balance >= 0 ? 'pos' : 'neg';
     const active = c.id === activeClientId ? 'active' : '';
+    const lines = Object.keys(CURRENCIES)
+      .filter(cur=>b[cur].due!==0 || b[cur].paid!==0)
+      .map(cur=>{
+        const cls = b[cur].balance >= 0 ? 'pos' : 'neg';
+        return `<div class="c-balance ${cls}">الرصيد: ${fmt(b[cur].balance, cur)}</div>`;
+      }).join('');
     return `<li class="client-item ${active}" onclick="selectClient('${c.id}')">
       <div>
         <div class="c-name">${escapeHtml(c.name)}</div>
-        <div class="c-balance ${cls}">الرصيد: ${fmt(b.balance)}</div>
+        ${lines || '<div class="c-balance">لا يوجد رصيد بعد</div>'}
       </div>
     </li>`;
   }).join('');
@@ -531,7 +559,6 @@ function renderMain(){
     return;
   }
   const b = clientBalance(client.id);
-  const balCls = b.balance >= 0 ? 'pos' : 'neg';
 
   main.innerHTML = `
     <div class="client-header">
@@ -546,11 +573,21 @@ function renderMain(){
       </div>
     </div>
 
-    <div class="balance-strip">
-      <div class="bal-cell due"><div class="lbl">إجمالي الدفعات المستلمة</div><div class="val">${fmt(b.due)}</div></div>
-      <div class="bal-cell paid"><div class="lbl">إجمالي المصروفات</div><div class="val">${fmt(b.paid)}</div></div>
-      <div class="bal-cell balance"><div class="lbl">الرصيد المتبقي</div><div class="val ${balCls}">${fmt(b.balance)}</div></div>
-    </div>
+    <table class="cur-balance-table">
+      <thead><tr><th>العملة</th><th>إجمالي الدفعات المستلمة</th><th>إجمالي المصروفات</th><th>الرصيد المتبقي</th></tr></thead>
+      <tbody>
+        ${Object.keys(CURRENCIES).map(cur=>{
+          const bb = b[cur];
+          const balCls = bb.balance >= 0 ? 'bal-pos' : 'bal-neg';
+          return `<tr>
+            <td class="cur-name">${CURRENCIES[cur].label}</td>
+            <td class="amount-cell due">${fmt(bb.due, cur)}</td>
+            <td class="amount-cell paid">${fmt(bb.paid, cur)}</td>
+            <td class="amount-cell ${balCls}">${fmt(bb.balance, cur)}</td>
+          </tr>`;
+        }).join('')}
+      </tbody>
+    </table>
 
     <div class="tabs">
       <div class="tab ${activeTab==='payments'?'active':''}" onclick="setTab('payments')">الدفعات المستلمة</div>
@@ -575,7 +612,12 @@ function renderTabBody(){
       <div class="entry-form">
         <input type="date" id="pDate" value="${todayISO()}">
         <input type="text" id="pMethod" placeholder="طريقة الدفع (نقدًا، تحويل...)">
-        <input type="number" id="pAmount" placeholder="المبلغ $" step="0.01">
+        <input type="number" id="pAmount" placeholder="المبلغ" step="0.01">
+        <select id="pCurrency">
+          <option value="SYP">ليرة سورية</option>
+          <option value="USD">دولار أمريكي</option>
+          <option value="EUR">يورو</option>
+        </select>
         <input type="text" id="pNote" placeholder="ملاحظة">
         <button class="btn btn-navy btn-sm" onclick="addPayment('${client.id}')">+ إضافة دفعة</button>
       </div>
@@ -587,7 +629,12 @@ function renderTabBody(){
       <div class="entry-form">
         <input type="date" id="eDate" value="${todayISO()}">
         <input type="text" id="eDesc" placeholder="عنوان العمل / المصروف (مختصر)">
-        <input type="number" id="eAmount" placeholder="المبلغ $" step="0.01">
+        <input type="number" id="eAmount" placeholder="المبلغ" step="0.01">
+        <select id="eCurrency">
+          <option value="SYP">ليرة سورية</option>
+          <option value="USD">دولار أمريكي</option>
+          <option value="EUR">يورو</option>
+        </select>
         <input type="text" id="eNote" placeholder="ملاحظة قصيرة (اختياري)">
         <textarea id="eWork" rows="2" placeholder="شرح تفصيلي للعمل الذي تم إنجازه مقابل هذا المبلغ (يظهر في التقرير)" style="grid-column:1/-1;font-family:inherit;font-size:13px;padding:9px 10px;border:1px solid var(--line);border-radius:4px;resize:vertical;"></textarea>
         <button class="btn btn-navy btn-sm" onclick="addExpense('${client.id}')">+ إضافة مصروف</button>
@@ -604,7 +651,7 @@ function renderTable(rows, type){
   return `
     <table>
       <thead><tr>
-        <th>التاريخ</th><th>طريقة الدفع</th><th>ملاحظة</th><th>المبلغ</th><th></th>
+        <th>التاريخ</th><th>طريقة الدفع</th><th>ملاحظة</th><th>العملة</th><th>المبلغ</th><th></th>
       </tr></thead>
       <tbody>
         ${rows.map(r=>`
@@ -612,7 +659,8 @@ function renderTable(rows, type){
             <td>${r.date||'-'}</td>
             <td>${escapeHtml(r.method || '-')}</td>
             <td class="note-cell">${escapeHtml(r.note||'')}</td>
-            <td class="amount-cell due">${fmt(r.amount)}</td>
+            <td class="cur-tag">${CURRENCIES[normCur(r.currency)].label}</td>
+            <td class="amount-cell due">${fmt(r.amount, r.currency)}</td>
             <td><button class="del-link" onclick="deleteEntry('${type}','${r.id}')">حذف</button></td>
           </tr>
         `).join('')}
@@ -633,7 +681,7 @@ function renderExpenseTable(rows){
           <div class="eb-date">${r.date||'-'}${r.note ? ' — '+escapeHtml(r.note) : ''}</div>
         </div>
         <div style="display:flex;align-items:center;gap:10px;">
-          <div class="eb-amount">${fmt(r.amount)}</div>
+          <div class="eb-amount">${fmt(r.amount, r.currency)}</div>
           <button class="del-link" onclick="deleteEntry('expense','${r.id}')">حذف</button>
         </div>
       </div>
@@ -688,16 +736,17 @@ async function addPayment(clientId){
   const date = document.getElementById('pDate').value || todayISO();
   const method = document.getElementById('pMethod').value.trim();
   const amount = parseFloat(document.getElementById('pAmount').value);
+  const currency = normCur(document.getElementById('pCurrency').value);
   const note = document.getElementById('pNote').value.trim();
   if(!amount || amount<=0){ showToast('الرجاء إدخال مبلغ صحيح'); return; }
 
   const { data, error } = await sb.from('payments')
-    .insert({ user_id: currentUser.id, client_id: clientId, date, method, amount, note })
+    .insert({ user_id: currentUser.id, client_id: clientId, date, method, amount, currency, note })
     .select().single();
 
   if(error){ showToast('تعذر حفظ الدفعة'); console.error(error); return; }
 
-  state.payments.push({ id: data.id, clientId, date, method, amount, note });
+  state.payments.push({ id: data.id, clientId, date, method, amount, currency, note });
   render();
   showToast('تمت إضافة الدفعة');
 }
@@ -706,17 +755,18 @@ async function addExpense(clientId){
   const date = document.getElementById('eDate').value || todayISO();
   const description = document.getElementById('eDesc').value.trim();
   const amount = parseFloat(document.getElementById('eAmount').value);
+  const currency = normCur(document.getElementById('eCurrency').value);
   const note = document.getElementById('eNote').value.trim();
   const work = document.getElementById('eWork').value.trim();
   if(!amount || amount<=0){ showToast('الرجاء إدخال مبلغ صحيح'); return; }
 
   const { data, error } = await sb.from('expenses')
-    .insert({ user_id: currentUser.id, client_id: clientId, date, description, amount, note, work })
+    .insert({ user_id: currentUser.id, client_id: clientId, date, description, amount, currency, note, work })
     .select().single();
 
   if(error){ showToast('تعذر حفظ المصروف'); console.error(error); return; }
 
-  state.expenses.push({ id: data.id, clientId, date, description, amount, note, work });
+  state.expenses.push({ id: data.id, clientId, date, description, amount, currency, note, work });
   render();
   showToast('تمت إضافة المصروف');
 }
@@ -730,6 +780,22 @@ async function deleteEntry(type, id){
   else { state.expenses = state.expenses.filter(e=>e.id!==id); }
   render();
   showToast('تم الحذف');
+}
+
+/* ================= Report helpers ================= */
+function currencySummaryBlocks(b){
+  const activeCurs = Object.keys(CURRENCIES).filter(cur=>b[cur].due!==0 || b[cur].paid!==0);
+  if(activeCurs.length===0){
+    return `<div class="empty-row">لا توجد بيانات مالية بعد.</div>`;
+  }
+  return activeCurs.map(cur=>{
+    const bb = b[cur];
+    return `<div class="report-summary" style="margin-top:14px;">
+      <div><div class="lbl">إجمالي الدفعات (${CURRENCIES[cur].label})</div><div class="val" style="color:var(--green)">${fmt(bb.due,cur)}</div></div>
+      <div><div class="lbl">إجمالي المصروفات</div><div class="val" style="color:var(--navy-800)">${fmt(bb.paid,cur)}</div></div>
+      <div><div class="lbl">الرصيد المتبقي</div><div class="val" style="color:${bb.balance>=0?'var(--green)':'var(--red)'}">${fmt(bb.balance,cur)}</div></div>
+    </div>`;
+  }).join('');
 }
 
 /* ================= Report ================= */
@@ -750,8 +816,8 @@ function openReport(clientId){
     <p style="font-size:13.5px;">الموكل: <strong>${escapeHtml(client.name)}</strong>${client.phone ? ' — هاتف: '+escapeHtml(client.phone) : ''}</p>
 
     <h4>الدفعات المستلمة</h4>
-    ${payments.length ? `<table><thead><tr><th>التاريخ</th><th>طريقة الدفع</th><th>ملاحظة</th><th>المبلغ</th></tr></thead>
-      <tbody>${payments.map(p=>`<tr><td>${p.date||'-'}</td><td>${escapeHtml(p.method||'-')}</td><td>${escapeHtml(p.note||'')}</td><td class="amount-cell due">${fmt(p.amount)}</td></tr>`).join('')}</tbody></table>`
+    ${payments.length ? `<table><thead><tr><th>التاريخ</th><th>طريقة الدفع</th><th>ملاحظة</th><th>العملة</th><th>المبلغ</th></tr></thead>
+      <tbody>${payments.map(p=>`<tr><td>${p.date||'-'}</td><td>${escapeHtml(p.method||'-')}</td><td>${escapeHtml(p.note||'')}</td><td>${CURRENCIES[normCur(p.currency)].label}</td><td class="amount-cell due">${fmt(p.amount,p.currency)}</td></tr>`).join('')}</tbody></table>`
       : '<div class="empty-row">لا توجد دفعات مسجلة.</div>'}
 
     <h4>المصروفات والأعمال المنجزة</h4>
@@ -759,17 +825,14 @@ function openReport(clientId){
       <div class="expense-block">
         <div class="eb-top">
           <div><div class="eb-title">${escapeHtml(e.description || 'بدون عنوان')}</div><div class="eb-date">${e.date||'-'}${e.note ? ' — '+escapeHtml(e.note) : ''}</div></div>
-          <div class="eb-amount">${fmt(e.amount)}</div>
+          <div class="eb-amount">${fmt(e.amount,e.currency)}</div>
         </div>
         ${e.work ? `<div class="work-detail"><div class="wd-label">شرح العمل المُنجز</div>${escapeHtml(e.work)}</div>` : ''}
       </div>
     `).join('') : '<div class="empty-row">لا توجد مصروفات مسجلة.</div>'}
 
-    <div class="report-summary">
-      <div><div class="lbl">إجمالي الدفعات</div><div class="val" style="color:var(--green)">${fmt(b.due)}</div></div>
-      <div><div class="lbl">إجمالي المصروفات</div><div class="val" style="color:var(--navy-800)">${fmt(b.paid)}</div></div>
-      <div><div class="lbl">الرصيد المتبقي</div><div class="val" style="color:${b.balance>=0?'var(--green)':'var(--red)'}">${fmt(b.balance)}</div></div>
-    </div>
+    <h4>الملخص المالي</h4>
+    ${currencySummaryBlocks(b)}
 
     <div class="r-footer-note">تم إعداد هذا التقرير آليًا لأغراض المتابعة المالية بين المحامي والموكل، ولا يغني عن أي مستند رسمي أو فاتورة معتمدة عند الحاجة.</div>
     ${contactFooterHtml()}
@@ -784,7 +847,10 @@ function openExpenseReport(clientId){
   const client = state.clients.find(c=>c.id===clientId);
   if(!client) return;
   const expenses = state.expenses.filter(e=>e.clientId===clientId).sort((a,b)=>(a.date||'').localeCompare(b.date||''));
-  const totalExp = expenses.reduce((s,e)=>s+Number(e.amount||0),0);
+  const totalsByCur = {};
+  Object.keys(CURRENCIES).forEach(cur=>{
+    totalsByCur[cur] = expenses.filter(e=>normCur(e.currency)===cur).reduce((s,e)=>s+Number(e.amount||0),0);
+  });
   const lawyerName = document.getElementById('lawyerName').value.trim() || 'المحامي';
   const dateStr = new Date().toLocaleDateString('ar-EG', { year:'numeric', month:'long', day:'numeric' });
 
@@ -800,15 +866,19 @@ function openExpenseReport(clientId){
       <div class="expense-block">
         <div class="eb-top">
           <div><div class="eb-title">${i+1}. ${escapeHtml(e.description || 'بدون عنوان')}</div><div class="eb-date">${e.date||'-'}${e.note ? ' — '+escapeHtml(e.note) : ''}</div></div>
-          <div class="eb-amount">${fmt(e.amount)}</div>
+          <div class="eb-amount">${fmt(e.amount,e.currency)}</div>
         </div>
         ${e.work ? `<div class="work-detail"><div class="wd-label">شرح العمل المُنجز</div>${escapeHtml(e.work)}</div>` : '<div class="work-detail" style="border-color:var(--line);color:var(--ink-soft);">لم يُضف شرح تفصيلي لهذا البند.</div>'}
       </div>
     `).join('') : '<div class="empty-row">لا توجد مصروفات مسجلة لهذا الموكل.</div>'}
 
-    <div class="report-summary" style="grid-template-columns:1fr;">
-      <div><div class="lbl">إجمالي المصروفات والأتعاب</div><div class="val" style="color:var(--navy-800)">${fmt(totalExp)}</div></div>
-    </div>
+    ${(()=>{
+      const activeCurs = Object.keys(CURRENCIES).filter(cur=>totalsByCur[cur]!==0);
+      if(activeCurs.length===0) return `<div class="report-summary" style="grid-template-columns:1fr;"><div><div class="lbl">إجمالي المصروفات والأتعاب</div><div class="val" style="color:var(--navy-800)">لا يوجد</div></div></div>`;
+      return `<div class="report-summary" style="grid-template-columns:repeat(${activeCurs.length},1fr);">
+        ${activeCurs.map(cur=>`<div><div class="lbl">إجمالي المصروفات (${CURRENCIES[cur].label})</div><div class="val" style="color:var(--navy-800)">${fmt(totalsByCur[cur],cur)}</div></div>`).join('')}
+      </div>`;
+    })()}
 
     <div class="r-footer-note">يوضح هذا التقرير تفصيل الأعمال والمصروفات المُنجزة لصالح الموكل، وتم إعداده آليًا لأغراض المتابعة والشفافية المالية.</div>
     ${contactFooterHtml()}
@@ -828,8 +898,8 @@ function contactFooterHtml(){
     <div class="r-contact-footer">
       <div class="rc-left">
         <strong>Levant Law Firm | ليفانت للمحاماة</strong><br>
-        دمشق، سوريا — المنظمات الدولية، التحكيم التجاري، قانون الشركات<br>
-        دوام العمل: 9:00 AM – 6:00 PM
+        دمشق، سوريا<br>
+        اوقات العمل: 9:00 AM – 6:00 PM
       </div>
       <div class="rc-right">
         <a href="https://www.levantlawfirm.com">www.levantlawfirm.com</a><br>
@@ -857,18 +927,26 @@ function copyReportText(){
   const contactBlock = `\n\n---\nLevant Law Firm | ليفانت للمحاماة\nدمشق، سوريا — المنظمات الدولية، التحكيم التجاري، قانون الشركات\nwww.levantlawfirm.com | info@levantlawfirm.com | 00963956010628\nدوام العمل: 9:00 AM – 6:00 PM`;
 
   if(reportType === 'expenses'){
-    const totalExp = expenses.reduce((s,e)=>s+Number(e.amount||0),0);
+    const totalsByCur = {};
+    Object.keys(CURRENCIES).forEach(cur=>{
+      totalsByCur[cur] = expenses.filter(e=>normCur(e.currency)===cur).reduce((s,e)=>s+Number(e.amount||0),0);
+    });
     txt = `تقرير مصروفات وأعمال منجزة — ${lawyerName}\nالموكل: ${client.name}\nتاريخ: ${new Date().toLocaleDateString('ar-EG')}\n\n`;
-    txt += expenses.length ? expenses.map((e,i)=>`${i+1}. ${e.description||'بدون عنوان'} — ${e.date||'-'} — ${fmt(e.amount)}${e.note?'\n   ملاحظة: '+e.note:''}${e.work?'\n   شرح العمل: '+e.work:''}`).join('\n\n') : 'لا توجد مصروفات مسجلة.';
-    txt += `\n\nإجمالي المصروفات: ${fmt(totalExp)}`;
+    txt += expenses.length ? expenses.map((e,i)=>`${i+1}. ${e.description||'بدون عنوان'} — ${e.date||'-'} — ${fmt(e.amount,e.currency)}${e.note?'\n   ملاحظة: '+e.note:''}${e.work?'\n   شرح العمل: '+e.work:''}`).join('\n\n') : 'لا توجد مصروفات مسجلة.';
+    const totalLines = Object.keys(CURRENCIES).filter(cur=>totalsByCur[cur]!==0).map(cur=>`إجمالي المصروفات (${CURRENCIES[cur].label}): ${fmt(totalsByCur[cur],cur)}`).join('\n');
+    txt += `\n\n${totalLines || 'لا توجد مصروفات مسجلة.'}`;
     txt += contactBlock;
   } else {
     txt = `تقرير حساب — ${lawyerName}\nالموكل: ${client.name}\nتاريخ: ${new Date().toLocaleDateString('ar-EG')}\n\n`;
     txt += `الدفعات المستلمة:\n`;
-    txt += payments.length ? payments.map(p=>`- ${p.date||'-'} | ${p.method||'-'} | ${fmt(p.amount)}${p.note?' | '+p.note:''}`).join('\n') : '- لا توجد دفعات';
+    txt += payments.length ? payments.map(p=>`- ${p.date||'-'} | ${p.method||'-'} | ${fmt(p.amount,p.currency)}${p.note?' | '+p.note:''}`).join('\n') : '- لا توجد دفعات';
     txt += `\n\nالمصروفات والأعمال المنجزة:\n`;
-    txt += expenses.length ? expenses.map(e=>`- ${e.date||'-'} | ${e.description||'-'} | ${fmt(e.amount)}${e.note?' | ملاحظة: '+e.note:''}${e.work?'\n  شرح العمل: '+e.work:''}`).join('\n') : '- لا توجد مصروفات';
-    txt += `\n\nإجمالي الدفعات: ${fmt(b.due)}\nإجمالي المصروفات: ${fmt(b.paid)}\nالرصيد المتبقي: ${fmt(b.balance)}`;
+    txt += expenses.length ? expenses.map(e=>`- ${e.date||'-'} | ${e.description||'-'} | ${fmt(e.amount,e.currency)}${e.note?' | ملاحظة: '+e.note:''}${e.work?'\n  شرح العمل: '+e.work:''}`).join('\n') : '- لا توجد مصروفات';
+    const summaryLines = Object.keys(CURRENCIES)
+      .filter(cur=>b[cur].due!==0 || b[cur].paid!==0)
+      .map(cur=>`(${CURRENCIES[cur].label}) — إجمالي الدفعات: ${fmt(b[cur].due,cur)} | إجمالي المصروفات: ${fmt(b[cur].paid,cur)} | الرصيد المتبقي: ${fmt(b[cur].balance,cur)}`)
+      .join('\n');
+    txt += `\n\n${summaryLines || 'لا توجد بيانات مالية بعد.'}`;
     txt += contactBlock;
   }
 
