@@ -162,6 +162,9 @@
   .note-cell{color:var(--ink-soft);font-size:12.5px;}
   .del-link{color:var(--red);font-size:12px;cursor:pointer;background:none;border:none;font-family:inherit;padding:4px 6px;}
   .del-link:hover{text-decoration:underline;}
+  .edit-link{color:var(--navy-800);font-size:12px;cursor:pointer;background:none;border:none;font-family:inherit;padding:4px 6px;}
+  .edit-link:hover{text-decoration:underline;}
+  .row-actions{display:flex;align-items:center;gap:2px;white-space:nowrap;}
   .empty-row{padding:26px;text-align:center;color:var(--ink-soft);font-size:13px;}
 
   /* ===== Welcome / empty state ===== */
@@ -341,10 +344,10 @@
   </div>
 </div>
 
-<!-- Add client modal -->
+<!-- Add / Edit client modal -->
 <div class="overlay" id="clientModalOverlay">
   <div class="modal">
-    <div class="modal-head"><h3>إضافة موكل جديد</h3></div>
+    <div class="modal-head"><h3 id="clientModalTitle">إضافة موكل جديد</h3></div>
     <div class="modal-body">
       <label>اسم الموكل</label>
       <input id="newClientName" type="text" placeholder="مثال: عمر كواره">
@@ -355,7 +358,51 @@
     </div>
     <div class="modal-foot">
       <button class="btn btn-ghost btn-sm" onclick="closeClientModal()">إلغاء</button>
-      <button class="btn btn-navy btn-sm" onclick="saveNewClient()">حفظ</button>
+      <button class="btn btn-navy btn-sm" id="clientModalSaveBtn" onclick="saveClientModal()">حفظ</button>
+    </div>
+  </div>
+</div>
+
+<!-- Edit payment modal -->
+<div class="overlay" id="paymentModalOverlay">
+  <div class="modal">
+    <div class="modal-head"><h3>تعديل الدفعة</h3></div>
+    <div class="modal-body">
+      <label>التاريخ</label>
+      <input id="editPDate" type="date">
+      <label>طريقة الدفع</label>
+      <input id="editPMethod" type="text" placeholder="نقدًا، تحويل...">
+      <label>المبلغ $</label>
+      <input id="editPAmount" type="number" step="0.01">
+      <label>ملاحظة</label>
+      <input id="editPNote" type="text">
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost btn-sm" onclick="closePaymentEditModal()">إلغاء</button>
+      <button class="btn btn-navy btn-sm" onclick="savePaymentEdit()">حفظ التعديلات</button>
+    </div>
+  </div>
+</div>
+
+<!-- Edit expense modal -->
+<div class="overlay" id="expenseModalOverlay">
+  <div class="modal">
+    <div class="modal-head"><h3>تعديل المصروف</h3></div>
+    <div class="modal-body">
+      <label>التاريخ</label>
+      <input id="editEDate" type="date">
+      <label>عنوان العمل / المصروف</label>
+      <input id="editEDesc" type="text">
+      <label>المبلغ $</label>
+      <input id="editEAmount" type="number" step="0.01">
+      <label>ملاحظة قصيرة (اختياري)</label>
+      <input id="editENote" type="text">
+      <label>شرح تفصيلي للعمل المُنجز (اختياري)</label>
+      <textarea id="editEWork" rows="3"></textarea>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost btn-sm" onclick="closeExpenseEditModal()">إلغاء</button>
+      <button class="btn btn-navy btn-sm" onclick="saveExpenseEdit()">حفظ التعديلات</button>
     </div>
   </div>
 </div>
@@ -391,6 +438,9 @@ let state = { clients: [], payments: [], expenses: [] };
 let activeClientId = null;
 let activeTab = 'payments';
 let currentUser = null;
+let editingClientId = null;
+let editingPaymentId = null;
+let editingExpenseId = null;
 
 function uid(){ return Date.now().toString(36) + Math.random().toString(36).slice(2,8); }
 
@@ -542,6 +592,7 @@ function renderMain(){
       <div class="client-actions">
         <button class="btn btn-brass btn-sm" onclick="openReport('${client.id}')">📄 تقرير كامل</button>
         <button class="btn btn-ghost btn-sm" onclick="openExpenseReport('${client.id}')">🧾 تقرير المصروفات</button>
+        <button class="btn btn-ghost btn-sm" onclick="openClientModal('${client.id}')">✎ تعديل بيانات الموكل</button>
         <button class="btn btn-danger-ghost" onclick="deleteClient('${client.id}')">حذف الموكل</button>
       </div>
     </div>
@@ -613,7 +664,12 @@ function renderTable(rows, type){
             <td>${escapeHtml(r.method || '-')}</td>
             <td class="note-cell">${escapeHtml(r.note||'')}</td>
             <td class="amount-cell due">${fmt(r.amount)}</td>
-            <td><button class="del-link" onclick="deleteEntry('${type}','${r.id}')">حذف</button></td>
+            <td>
+              <div class="row-actions">
+                <button class="edit-link" onclick="openPaymentEditModal('${r.id}')">تعديل</button>
+                <button class="del-link" onclick="deleteEntry('${type}','${r.id}')">حذف</button>
+              </div>
+            </td>
           </tr>
         `).join('')}
       </tbody>
@@ -634,7 +690,10 @@ function renderExpenseTable(rows){
         </div>
         <div style="display:flex;align-items:center;gap:10px;">
           <div class="eb-amount">${fmt(r.amount)}</div>
-          <button class="del-link" onclick="deleteEntry('expense','${r.id}')">حذف</button>
+          <div class="row-actions">
+            <button class="edit-link" onclick="openExpenseEditModal('${r.id}')">تعديل</button>
+            <button class="del-link" onclick="deleteEntry('expense','${r.id}')">حذف</button>
+          </div>
         </div>
       </div>
       ${r.work ? `<div class="work-detail"><div class="wd-label">شرح العمل المُنجز</div>${escapeHtml(r.work)}</div>` : ''}
@@ -643,31 +702,138 @@ function renderExpenseTable(rows){
 }
 
 /* ================= CRUD ================= */
-function openClientModal(){
-  document.getElementById('newClientName').value='';
-  document.getElementById('newClientPhone').value='';
-  document.getElementById('newClientNote').value='';
+function openClientModal(id){
+  editingClientId = id || null;
+  const isEdit = !!editingClientId;
+  document.getElementById('clientModalTitle').textContent = isEdit ? 'تعديل بيانات الموكل' : 'إضافة موكل جديد';
+  document.getElementById('clientModalSaveBtn').textContent = isEdit ? 'حفظ التعديلات' : 'حفظ';
+
+  if(isEdit){
+    const c = state.clients.find(cl=>cl.id===editingClientId);
+    if(!c) return;
+    document.getElementById('newClientName').value = c.name || '';
+    document.getElementById('newClientPhone').value = c.phone || '';
+    document.getElementById('newClientNote').value = c.note || '';
+  } else {
+    document.getElementById('newClientName').value='';
+    document.getElementById('newClientPhone').value='';
+    document.getElementById('newClientNote').value='';
+  }
   document.getElementById('clientModalOverlay').classList.add('show');
 }
-function closeClientModal(){ document.getElementById('clientModalOverlay').classList.remove('show'); }
+function closeClientModal(){
+  document.getElementById('clientModalOverlay').classList.remove('show');
+  editingClientId = null;
+}
 
-async function saveNewClient(){
+async function saveClientModal(){
   const name = document.getElementById('newClientName').value.trim();
   if(!name){ showToast('الرجاء إدخال اسم الموكل'); return; }
   const phone = document.getElementById('newClientPhone').value.trim();
   const note = document.getElementById('newClientNote').value.trim();
 
-  const { data, error } = await sb.from('clients')
-    .insert({ user_id: currentUser.id, name, phone, note })
+  if(editingClientId){
+    const { data, error } = await sb.from('clients')
+      .update({ name, phone, note })
+      .eq('id', editingClientId)
+      .select().single();
+
+    if(error){ showToast('تعذر حفظ التعديلات'); console.error(error); return; }
+
+    const c = state.clients.find(cl=>cl.id===editingClientId);
+    if(c){ c.name = data.name; c.phone = data.phone; c.note = data.note; }
+    closeClientModal();
+    render();
+    showToast('تم تعديل بيانات الموكل');
+  } else {
+    const { data, error } = await sb.from('clients')
+      .insert({ user_id: currentUser.id, name, phone, note })
+      .select().single();
+
+    if(error){ showToast('تعذر حفظ الموكل'); console.error(error); return; }
+
+    state.clients.push({ id: data.id, name: data.name, phone: data.phone, note: data.note });
+    closeClientModal();
+    activeClientId = data.id;
+    render();
+    showToast('تمت إضافة الموكل');
+  }
+}
+
+/* ---- Edit payment ---- */
+function openPaymentEditModal(id){
+  const p = state.payments.find(x=>x.id===id);
+  if(!p) return;
+  editingPaymentId = id;
+  document.getElementById('editPDate').value = p.date || todayISO();
+  document.getElementById('editPMethod').value = p.method || '';
+  document.getElementById('editPAmount').value = p.amount || '';
+  document.getElementById('editPNote').value = p.note || '';
+  document.getElementById('paymentModalOverlay').classList.add('show');
+}
+function closePaymentEditModal(){
+  document.getElementById('paymentModalOverlay').classList.remove('show');
+  editingPaymentId = null;
+}
+async function savePaymentEdit(){
+  if(!editingPaymentId) return;
+  const date = document.getElementById('editPDate').value || todayISO();
+  const method = document.getElementById('editPMethod').value.trim();
+  const amount = parseFloat(document.getElementById('editPAmount').value);
+  const note = document.getElementById('editPNote').value.trim();
+  if(!amount || amount<=0){ showToast('الرجاء إدخال مبلغ صحيح'); return; }
+
+  const { data, error } = await sb.from('payments')
+    .update({ date, method, amount, note })
+    .eq('id', editingPaymentId)
     .select().single();
 
-  if(error){ showToast('تعذر حفظ الموكل'); console.error(error); return; }
+  if(error){ showToast('تعذر حفظ التعديلات'); console.error(error); return; }
 
-  state.clients.push({ id: data.id, name: data.name, phone: data.phone, note: data.note });
-  closeClientModal();
-  activeClientId = data.id;
+  const p = state.payments.find(x=>x.id===editingPaymentId);
+  if(p){ p.date = data.date; p.method = data.method; p.amount = data.amount; p.note = data.note; }
+  closePaymentEditModal();
   render();
-  showToast('تمت إضافة الموكل');
+  showToast('تم تعديل الدفعة');
+}
+
+/* ---- Edit expense ---- */
+function openExpenseEditModal(id){
+  const e = state.expenses.find(x=>x.id===id);
+  if(!e) return;
+  editingExpenseId = id;
+  document.getElementById('editEDate').value = e.date || todayISO();
+  document.getElementById('editEDesc').value = e.description || '';
+  document.getElementById('editEAmount').value = e.amount || '';
+  document.getElementById('editENote').value = e.note || '';
+  document.getElementById('editEWork').value = e.work || '';
+  document.getElementById('expenseModalOverlay').classList.add('show');
+}
+function closeExpenseEditModal(){
+  document.getElementById('expenseModalOverlay').classList.remove('show');
+  editingExpenseId = null;
+}
+async function saveExpenseEdit(){
+  if(!editingExpenseId) return;
+  const date = document.getElementById('editEDate').value || todayISO();
+  const description = document.getElementById('editEDesc').value.trim();
+  const amount = parseFloat(document.getElementById('editEAmount').value);
+  const note = document.getElementById('editENote').value.trim();
+  const work = document.getElementById('editEWork').value.trim();
+  if(!amount || amount<=0){ showToast('الرجاء إدخال مبلغ صحيح'); return; }
+
+  const { data, error } = await sb.from('expenses')
+    .update({ date, description, amount, note, work })
+    .eq('id', editingExpenseId)
+    .select().single();
+
+  if(error){ showToast('تعذر حفظ التعديلات'); console.error(error); return; }
+
+  const e = state.expenses.find(x=>x.id===editingExpenseId);
+  if(e){ e.date = data.date; e.description = data.description; e.amount = data.amount; e.note = data.note; e.work = data.work; }
+  closeExpenseEditModal();
+  render();
+  showToast('تم تعديل المصروف');
 }
 
 async function deleteClient(id){
