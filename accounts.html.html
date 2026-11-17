@@ -1,0 +1,1222 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>المحامي مهند محمد نطفجي</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<style>
+  :root{
+    --brand-950:#042d25;
+    --brand-900:#0b3d32;
+    --brand-800:#145041;
+    --brand-700:#1d6552;
+    --brass:#b59247;
+    --brass-light:#cbaf6d;
+    --paper:#f6f4ee;
+    --paper-2:#ffffff;
+    --ink:#1c2530;
+    --ink-soft:#5b6472;
+    --line:#e2ddd0;
+    --green:#2f6b4f;
+    --red:#a13c3c;
+    --shadow: 0 8px 24px rgba(13,27,46,0.10);
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'IBM Plex Sans Arabic', sans-serif;
+    min-height:100vh;
+  }
+  .app{max-width:1180px;margin:0 auto;padding:28px 20px 80px;}
+
+  /* ===== Header ===== */
+  .masthead{
+    display:flex;align-items:center;justify-content:space-between;
+    padding-bottom:22px;margin-bottom:26px;
+    border-bottom:2px solid var(--brand-900);
+  }
+  .brand{display:flex;align-items:center;gap:14px;}
+  .brand-mark{
+    height:44px;width:auto;flex-shrink:0;
+    display:block;object-fit:contain;
+  }
+  .brand h1{
+    font-family:'Amiri',serif;font-size:26px;font-weight:700;
+    color:var(--brand-900);margin:0;letter-spacing:.3px;
+  }
+  .brand p{margin:2px 0 0;font-size:12.5px;color:var(--ink-soft);}
+  .lawyer-name-field{
+    font-size:13px;color:var(--ink-soft);text-align:left;
+  }
+  .lawyer-name-field input{
+    border:none;background:transparent;border-bottom:1px dashed var(--line);
+    font-family:inherit;font-size:14px;color:var(--brand-900);font-weight:600;
+    padding:4px 2px;text-align:left;width:180px;
+  }
+  .lawyer-name-field input:focus{outline:none;border-color:var(--brass);}
+
+  /* ===== Layout ===== */
+  .layout{display:grid;grid-template-columns:300px 1fr;gap:24px;}
+  @media (max-width:860px){.layout{grid-template-columns:1fr;}}
+
+  /* ===== Client list panel ===== */
+  .panel{
+    background:var(--paper-2);border:1px solid var(--line);border-radius:6px;
+    box-shadow:var(--shadow);
+  }
+  .panel-head{
+    padding:16px 18px;border-bottom:1px solid var(--line);
+    display:flex;align-items:center;justify-content:space-between;
+  }
+  .panel-head h2{margin:0;font-size:15px;color:var(--brand-900);font-weight:700;}
+  .btn{
+    border:none;border-radius:5px;font-family:inherit;cursor:pointer;
+    font-weight:600;transition:filter .15s, transform .1s;
+  }
+  .btn:active{transform:translateY(1px);}
+  .btn:disabled{opacity:.6;cursor:default;}
+  .btn-brass{background:var(--brass);color:#fff;padding:8px 14px;font-size:13px;}
+  .btn-brass:hover{filter:brightness(1.08);}
+  .btn-navy{background:var(--brand-900);color:#fff;padding:9px 16px;font-size:13.5px;}
+  .btn-navy:hover{filter:brightness(1.15);}
+  .btn-ghost{background:transparent;color:var(--brand-800);border:1px solid var(--line);padding:8px 14px;font-size:13px;}
+  .btn-ghost:hover{background:var(--paper);}
+  .btn-danger-ghost{background:transparent;color:var(--red);border:1px solid #e4c9c9;padding:6px 12px;font-size:12.5px;}
+  .btn-danger-ghost:hover{background:#fbf1f1;}
+  .btn-sm{padding:6px 12px;font-size:12.5px;}
+
+  .client-list{list-style:none;margin:0;padding:8px;max-height:640px;overflow-y:auto;}
+  .client-item{
+    display:flex;align-items:center;justify-content:space-between;gap:8px;
+    padding:12px 12px;border-radius:5px;cursor:pointer;margin-bottom:3px;
+    border:1px solid transparent;
+  }
+  .client-item:hover{background:var(--paper);}
+  .client-item.active{background:var(--brand-900);}
+  .client-item.active .c-name{color:#fff;}
+  .client-item.active .c-balance{color:var(--brass-light);}
+  .c-name{font-weight:600;font-size:14px;color:var(--ink);}
+  .c-balance{font-size:12.5px;font-weight:700;margin-top:2px;}
+  .c-balance.pos{color:var(--green);}
+  .c-balance.neg{color:var(--red);}
+  .empty-hint{padding:30px 18px;text-align:center;color:var(--ink-soft);font-size:13px;line-height:1.9;}
+
+  /* ===== Main content ===== */
+  .main-panel{min-height:600px;}
+  .client-header{
+    padding:22px 24px;border-bottom:1px solid var(--line);
+    display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap;
+  }
+  .client-header h2{margin:0 0 4px;font-family:'Amiri',serif;font-size:22px;color:var(--brand-900);}
+  .client-meta{font-size:12.5px;color:var(--ink-soft);}
+  .client-actions{display:flex;gap:8px;flex-wrap:wrap;}
+
+  /* ===== Fees bar ===== */
+  .fees-bar{
+    display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+    padding:14px 24px;background:#fbf8f0;border-bottom:1px solid var(--line);
+  }
+  .fees-bar .fees-label{font-weight:700;color:var(--brass);font-size:14px;}
+  .fees-bar input, .fees-bar select{
+    font-family:inherit;font-size:13.5px;padding:8px 10px;border:1px solid var(--brass-light);
+    border-radius:4px;background:#fff;color:var(--ink);
+  }
+  .fees-bar input{width:140px;}
+  .fees-bar input:focus, .fees-bar select:focus{outline:none;border-color:var(--brass);}
+
+  .tabs{display:flex;border-bottom:1px solid var(--line);padding:0 20px;gap:4px;}
+  .tab{
+    padding:13px 16px;font-size:13.5px;font-weight:600;color:var(--ink-soft);
+    cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;
+  }
+  .tab.active{color:var(--brand-900);border-bottom-color:var(--brass);}
+
+  .tab-body{padding:20px 24px 28px;}
+
+  .entry-form{
+    display:grid;grid-template-columns:125px 1fr 110px 100px 130px;gap:10px;margin-bottom:16px;
+    background:var(--paper);border:1px solid var(--line);border-radius:6px;padding:14px;
+  }
+  @media (max-width:700px){.entry-form{grid-template-columns:1fr 1fr;}}
+  .cur-balance-table{margin:0;}
+  .cur-balance-table th, .cur-balance-table td{text-align:center;}
+  .cur-balance-table td.cur-name{font-weight:700;color:var(--brand-900);text-align:right;}
+  .amount-cell.bal-pos{color:var(--green);}
+  .amount-cell.bal-neg{color:var(--red);}
+  .amount-cell.fees{color:var(--brass);}
+  .cur-tag{font-size:11px;color:var(--ink-soft);font-weight:600;}
+  .entry-form input, .entry-form select{
+    font-family:inherit;font-size:13px;padding:9px 10px;border:1px solid var(--line);
+    border-radius:4px;background:#fff;color:var(--ink);width:100%;
+  }
+  .entry-form input:focus, .entry-form select:focus{outline:none;border-color:var(--brass);}
+  .entry-form button{grid-column:1/-1;justify-self:start;}
+
+  table{width:100%;border-collapse:collapse;font-size:13.5px;}
+  thead th{
+    text-align:right;font-size:12px;color:var(--ink-soft);font-weight:600;
+    padding:9px 10px;border-bottom:1px solid var(--line);white-space:nowrap;
+  }
+  tbody td{padding:11px 10px;border-bottom:1px solid var(--line);color:var(--ink);vertical-align:top;}
+  tbody tr:hover{background:var(--paper);}
+  .amount-cell{font-weight:700;font-family:'Amiri',serif;font-size:14.5px;}
+  .amount-cell.due{color:var(--green);}
+  .amount-cell.paid{color:var(--brand-800);}
+  .note-cell{color:var(--ink-soft);font-size:12.5px;}
+  .del-link{color:var(--red);font-size:12px;cursor:pointer;background:none;border:none;font-family:inherit;padding:4px 6px;}
+  .del-link:hover{text-decoration:underline;}
+  .edit-link{color:var(--brand-800);font-size:12px;cursor:pointer;background:none;border:none;font-family:inherit;padding:4px 6px;}
+  .edit-link:hover{text-decoration:underline;}
+  .row-actions{display:flex;align-items:center;gap:2px;white-space:nowrap;}
+  .empty-row{padding:26px;text-align:center;color:var(--ink-soft);font-size:13px;}
+
+  /* ===== Welcome / empty state ===== */
+  .welcome{padding:60px 30px;text-align:center;}
+  .welcome-mark{font-family:'Amiri',serif;font-size:44px;color:var(--brand-900);margin-bottom:6px;}
+  .welcome p{color:var(--ink-soft);font-size:14px;max-width:380px;margin:8px auto 20px;line-height:1.9;}
+
+  /* ===== Modal ===== */
+  .overlay{
+    position:fixed;inset:0;background:rgba(13,27,46,0.55);
+    display:none;align-items:center;justify-content:center;z-index:50;padding:20px;
+  }
+  .overlay.show{display:flex;}
+  .modal{
+    background:#fff;border-radius:8px;max-width:420px;width:100%;
+    box-shadow:0 20px 50px rgba(0,0,0,0.25);
+    max-height:calc(100vh - 40px);overflow-y:auto;
+  }
+  .modal-head{padding:18px 20px;border-bottom:1px solid var(--line);}
+  .modal-head h3{margin:0;font-size:16px;color:var(--brand-900);font-family:'Amiri',serif;}
+  .modal-body{padding:18px 20px;}
+  .modal-body label{display:block;font-size:12.5px;color:var(--ink-soft);margin-bottom:5px;margin-top:12px;}
+  .modal-body label:first-child{margin-top:0;}
+  .modal-body input, .modal-body textarea, .modal-body select{
+    width:100%;font-family:inherit;font-size:13.5px;padding:9px 11px;
+    border:1px solid var(--line);border-radius:5px;background:#fff;
+  }
+  .modal-body input:focus, .modal-body textarea:focus, .modal-body select:focus{outline:none;border-color:var(--brass);}
+  .modal-row{display:grid;grid-template-columns:1fr 140px;gap:8px;}
+  .modal-foot{padding:14px 20px;border-top:1px solid var(--line);display:flex;justify-content:flex-end;gap:8px;}
+
+  /* ===== Report ===== */
+  .report-overlay{
+    position:fixed;inset:0;background:rgba(13,27,46,0.6);z-index:60;
+    display:none;align-items:flex-start;justify-content:center;overflow-y:auto;padding:30px 16px;
+  }
+  .report-overlay.show{display:flex;}
+  .report-sheet{
+    background:#fff;width:100%;max-width:720px;border-radius:6px;overflow:hidden;
+    box-shadow:0 20px 60px rgba(0,0,0,0.3);
+  }
+  .report-toolbar{
+    display:flex;justify-content:space-between;align-items:center;
+    padding:12px 20px;background:var(--brand-950);
+  }
+  .report-toolbar .rt-actions{display:flex;gap:8px;}
+  .report-toolbar button{color:#fff;}
+  .report-close{background:transparent;border:1px solid rgba(255,255,255,.3);color:#fff;padding:7px 13px;font-size:12.5px;border-radius:5px;cursor:pointer;font-family:inherit;}
+
+  .report-content{padding:38px 42px;}
+  .report-content .r-top{
+    display:flex;justify-content:space-between;align-items:flex-start;
+    border-bottom:3px solid var(--brand-900);padding-bottom:18px;margin-bottom:22px;
+  }
+  .report-content .r-brand{display:flex;align-items:center;gap:12px;font-family:'Amiri',serif;font-size:20px;color:var(--brand-900);font-weight:700;}
+  .report-content .r-brand img{height:38px;width:auto;object-fit:contain;}
+  .report-content .r-brand .r-brand-text small{display:block;font-family:'IBM Plex Sans Arabic';font-size:11px;color:var(--ink-soft);font-weight:400;margin-top:3px;}
+  .work-detail{
+    background:var(--paper);border-right:3px solid var(--brass);
+    padding:10px 12px;margin-top:8px;border-radius:0 4px 4px 0;
+    font-size:12.5px;color:var(--ink);line-height:1.8;
+  }
+  .work-detail .wd-label{font-size:10.5px;color:var(--ink-soft);margin-bottom:3px;font-weight:600;}
+  .expense-block{border-bottom:1px solid var(--line);padding:14px 0;}
+  .expense-block:last-child{border-bottom:none;}
+  .expense-block .eb-top{display:flex;justify-content:space-between;align-items:baseline;gap:10px;}
+  .expense-block .eb-title{font-weight:700;font-size:13.5px;color:var(--brand-900);}
+  .expense-block .eb-date{font-size:11.5px;color:var(--ink-soft);}
+  .expense-block .eb-amount{font-weight:700;font-family:'Amiri',serif;font-size:15px;color:var(--brand-800);white-space:nowrap;}
+  .report-content .r-date{font-size:12px;color:var(--ink-soft);text-align:left;}
+  .report-content h4{font-size:13px;color:var(--brand-900);margin:26px 0 10px;text-transform:none;border-right:3px solid var(--brass);padding-right:9px;}
+  .report-content table{font-size:12.5px;}
+  .report-content thead th{background:var(--paper);}
+  .report-summary{
+    margin-top:26px;display:grid;grid-template-columns:repeat(4,1fr);gap:1px;
+    background:var(--line);border:1px solid var(--line);
+  }
+  .report-summary div{background:#fff;padding:14px;text-align:center;}
+  .report-summary .lbl{font-size:11px;color:var(--ink-soft);}
+  .report-summary .val{font-size:17px;font-weight:700;font-family:'Amiri',serif;margin-top:4px;}
+  .r-footer-note{margin-top:26px;font-size:11.5px;color:var(--ink-soft);line-height:1.8;border-top:1px solid var(--line);padding-top:14px;}
+  .r-contact-footer{
+    margin-top:14px;padding-top:14px;border-top:1px solid var(--line);
+    display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:10px;
+  }
+  .r-contact-footer .rc-left{font-size:11px;color:var(--ink-soft);line-height:1.9;}
+  .r-contact-footer .rc-left strong{color:var(--brand-900);font-family:'Amiri',serif;font-size:13px;}
+  .r-contact-footer .rc-right{font-size:11px;color:var(--ink-soft);text-align:left;line-height:1.9;}
+  .r-contact-footer a{color:var(--brand-800);text-decoration:none;}
+
+  @media print{
+    @page{ margin: 10mm; }
+    body{margin:0;}
+    .app, .overlay, .toast{display:none !important;}
+    .report-overlay{
+      position:static !important;
+      background:none;padding:0;display:block !important;
+      overflow:visible;inset:auto;
+    }
+    .report-sheet{box-shadow:none;max-width:100%;width:100%;border-radius:0;}
+    .report-toolbar{display:none;}
+    .report-content{padding:0 4mm;}
+    .report-content .r-top{padding-bottom:10px;margin-bottom:14px;}
+    .report-content .r-brand{font-size:17px;}
+    .report-content .r-brand img{height:30px;}
+    .report-content h4{margin:16px 0 8px;font-size:12px;}
+    .report-content table{font-size:11px;}
+    thead th{padding:6px 8px;}
+    tbody td{padding:7px 8px;}
+    .expense-block{padding:8px 0;}
+    .expense-block .eb-title{font-size:12px;}
+    .expense-block .eb-date{font-size:10.5px;}
+    .expense-block .eb-amount{font-size:13px;}
+    .work-detail{padding:7px 9px;font-size:11px;margin-top:6px;}
+    .report-summary div{padding:9px;}
+    .report-summary .val{font-size:15px;}
+    .r-footer-note, .r-contact-footer{font-size:10px;padding-top:10px;margin-top:16px;}
+  }
+
+  .toast{
+    position:fixed;bottom:24px;left:50%;transform:translateX(-50%);
+    background:var(--brand-950);color:#fff;padding:11px 22px;border-radius:6px;
+    font-size:13px;box-shadow:var(--shadow);opacity:0;pointer-events:none;transition:opacity .25s, transform .25s;
+    z-index:100;
+  }
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(-6px);}
+</style>
+</head>
+<body>
+
+<!-- Login gate -->
+<div class="overlay show" id="loginOverlay">
+  <div class="modal">
+    <div class="modal-head"><h3>تسجيل الدخول</h3></div>
+    <div class="modal-body">
+      <label>البريد الإلكتروني</label>
+      <input id="loginEmail" type="email" placeholder="you@example.com" autocomplete="username">
+      <label>كلمة المرور</label>
+      <input id="loginPassword" type="password" placeholder="••••••••" autocomplete="current-password">
+      <div id="loginError" style="color:var(--red);font-size:12.5px;margin-top:10px;"></div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-navy btn-sm" id="loginBtn" onclick="doLogin()" style="width:100%;">دخول</button>
+    </div>
+  </div>
+</div>
+
+<div class="app" id="appRoot" style="display:none;">
+
+  <div class="masthead">
+    <div class="brand">
+      <img class="brand-mark" id="brandLogo" alt="شعار المكتب">
+      <div>
+        <h1 id="firmTitle"> </h1>
+        <p>سجل الموكلين، الدفعات المستحقة، والمصروفات</p>
+      </div>
+    </div>
+    <div class="lawyer-name-field">
+      اسم المكتب / المحامي
+      <br>
+      <input id="lawyerName" type="text" placeholder="اكتب اسمك هنا">
+      <div id="storageHint" style="font-size:10.5px;color:var(--ink-soft);margin-top:4px;">متصل بقاعدة بيانات Supabase</div>
+      <button class="btn btn-ghost btn-sm" onclick="doLogout()" style="margin-top:6px;padding:4px 10px;font-size:11.5px;">تسجيل خروج</button>
+    </div>
+  </div>
+
+  <div class="layout">
+    <!-- Client list -->
+    <div class="panel">
+      <div class="panel-head">
+        <h2>الموكلون</h2>
+        <button class="btn btn-brass btn-sm" onclick="openClientModal()">+ إضافة موكل</button>
+      </div>
+      <ul class="client-list" id="clientList"></ul>
+    </div>
+
+    <!-- Main -->
+    <div class="panel main-panel" id="mainPanel"></div>
+  </div>
+</div>
+
+<!-- Add / Edit client modal -->
+<div class="overlay" id="clientModalOverlay">
+  <div class="modal">
+    <div class="modal-head"><h3 id="clientModalTitle">إضافة موكل جديد</h3></div>
+    <div class="modal-body">
+      <label>اسم الموكل</label>
+      <input id="newClientName" type="text" placeholder="مثال: عمر كواره">
+      <label>رقم الهاتف (اختياري)</label>
+      <input id="newClientPhone" type="text" placeholder="09xxxxxxxx">
+      <label>أتعاب القضية (اختياري)</label>
+      <div class="modal-row">
+        <input id="newClientFees" type="number" step="0.01" min="0" placeholder="0">
+        <select id="newClientFeesCurrency">
+          <option value="SYP">ليرة سورية</option>
+          <option value="USD">دولار أمريكي</option>
+          <option value="EUR">يورو</option>
+        </select>
+      </div>
+      <label>ملاحظات (اختياري)</label>
+      <textarea id="newClientNote" rows="2" placeholder="نوع القضية أو أي ملاحظة عامة"></textarea>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost btn-sm" onclick="closeClientModal()">إلغاء</button>
+      <button class="btn btn-navy btn-sm" id="clientModalSaveBtn" onclick="saveClientModal()">حفظ</button>
+    </div>
+  </div>
+</div>
+
+<!-- Edit payment modal -->
+<div class="overlay" id="paymentModalOverlay">
+  <div class="modal">
+    <div class="modal-head"><h3>تعديل الدفعة</h3></div>
+    <div class="modal-body">
+      <label>التاريخ</label>
+      <input id="editPDate" type="date">
+      <label>طريقة الدفع</label>
+      <input id="editPMethod" type="text" placeholder="نقدًا، تحويل...">
+      <label>المبلغ</label>
+      <input id="editPAmount" type="number" step="0.01">
+      <label>العملة</label>
+      <select id="editPCurrency">
+        <option value="SYP">ليرة سورية</option>
+        <option value="USD">دولار أمريكي</option>
+        <option value="EUR">يورو</option>
+      </select>
+      <label>ملاحظة</label>
+      <input id="editPNote" type="text">
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost btn-sm" onclick="closePaymentEditModal()">إلغاء</button>
+      <button class="btn btn-navy btn-sm" onclick="savePaymentEdit()">حفظ التعديلات</button>
+    </div>
+  </div>
+</div>
+
+<!-- Edit expense modal -->
+<div class="overlay" id="expenseModalOverlay">
+  <div class="modal">
+    <div class="modal-head"><h3>تعديل المصروف</h3></div>
+    <div class="modal-body">
+      <label>التاريخ</label>
+      <input id="editEDate" type="date">
+      <label>عنوان العمل / المصروف</label>
+      <input id="editEDesc" type="text">
+      <label>المبلغ</label>
+      <input id="editEAmount" type="number" step="0.01">
+      <label>العملة</label>
+      <select id="editECurrency">
+        <option value="SYP">ليرة سورية</option>
+        <option value="USD">دولار أمريكي</option>
+        <option value="EUR">يورو</option>
+      </select>
+      <label>ملاحظة قصيرة (اختياري)</label>
+      <input id="editENote" type="text">
+      <label>شرح تفصيلي للعمل المُنجز (اختياري)</label>
+      <textarea id="editEWork" rows="3"></textarea>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost btn-sm" onclick="closeExpenseEditModal()">إلغاء</button>
+      <button class="btn btn-navy btn-sm" onclick="saveExpenseEdit()">حفظ التعديلات</button>
+    </div>
+  </div>
+</div>
+
+<!-- Report modal -->
+<div class="report-overlay" id="reportOverlay">
+  <div class="report-sheet">
+    <div class="report-toolbar">
+      <div class="rt-actions">
+        <button class="btn btn-brass btn-sm" onclick="window.print()">طباعة / حفظ PDF</button>
+        <button class="btn btn-ghost btn-sm" style="background:transparent;color:#fff;border-color:rgba(255,255,255,.35)" onclick="copyReportText()">نسخ كنص</button>
+      </div>
+      <button class="report-close" onclick="closeReport()">إغلاق ✕</button>
+    </div>
+    <div class="report-content" id="reportContent"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ================= Embedded logo ================= */
+// ⚠️ الصق هون قيمة الشعار من ملفك الحالي (يلي بتبلش بـ "data:image/png;base64,...")
+const LOGO_DATA_URI = "";
+
+/* ================= Supabase connection ================= */
+const SUPABASE_URL = 'https://tmbnqgwmxulrvqvffrbd.supabase.co';
+const SUPABASE_ANON_KEY = 'sb_publishable_Jj1mA4pHyJ4dnZR4py6D9g_39ZyhcsF';
+
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+let state = { clients: [], payments: [], expenses: [] };
+let activeClientId = null;
+let activeTab = 'payments';
+let currentUser = null;
+let editingClientId = null;
+let editingPaymentId = null;
+let editingExpenseId = null;
+
+const DATE_LOCALE = 'ar-EG-u-nu-latn'; // تاريخ عربي بأرقام عادية
+
+/* ================= Auth ================= */
+async function initAuth(){
+  const logo = document.getElementById('brandLogo');
+  if(LOGO_DATA_URI){ logo.src = LOGO_DATA_URI; } else { logo.style.display = 'none'; }
+
+  const { data: { session } } = await sb.auth.getSession();
+  if(session){ currentUser = session.user; await showApp(); }
+  else { showLogin(); }
+
+  // فقط الدخول والخروج الفعليين، لتجنب إعادة التحميل عند تجديد التوكن
+  sb.auth.onAuthStateChange((event, session)=>{
+    if(event === 'SIGNED_IN' && session && !currentUser){
+      currentUser = session.user;
+      showApp();
+    } else if(event === 'SIGNED_OUT'){
+      currentUser = null;
+      state = { clients: [], payments: [], expenses: [] };
+      activeClientId = null;
+      showLogin();
+    }
+  });
+}
+
+function showLogin(){
+  document.getElementById('loginOverlay').classList.add('show');
+  document.getElementById('appRoot').style.display = 'none';
+  document.getElementById('loginPassword').value = '';
+  document.getElementById('loginError').textContent = '';
+}
+
+async function showApp(){
+  document.getElementById('loginOverlay').classList.remove('show');
+  document.getElementById('appRoot').style.display = 'block';
+  let savedName = null;
+  try{ savedName = localStorage.getItem('lawyer-name'); }catch(err){}
+  document.getElementById('lawyerName').value = savedName || 'Levant Law Firm';
+  await loadState();
+}
+
+async function doLogin(){
+  const email = document.getElementById('loginEmail').value.trim();
+  const password = document.getElementById('loginPassword').value;
+  const errEl = document.getElementById('loginError');
+  const btn = document.getElementById('loginBtn');
+  errEl.textContent = '';
+  if(!email || !password){ errEl.textContent = 'الرجاء إدخال البريد وكلمة المرور'; return; }
+
+  btn.disabled = true;
+  btn.textContent = 'جارٍ الدخول...';
+  const { error } = await sb.auth.signInWithPassword({ email, password });
+  btn.disabled = false;
+  btn.textContent = 'دخول';
+  if(error){ errEl.textContent = 'بيانات الدخول غير صحيحة'; }
+}
+
+async function doLogout(){
+  await sb.auth.signOut();
+}
+
+document.getElementById('loginPassword').addEventListener('keydown', (e)=>{
+  if(e.key === 'Enter') doLogin();
+});
+
+document.getElementById('lawyerName').addEventListener('change', (e)=>{
+  try{ localStorage.setItem('lawyer-name', e.target.value); }catch(err){}
+});
+
+/* ================= Load data from Supabase ================= */
+async function loadState(){
+  const [{ data: clients, error: e1 }, { data: payments, error: e2 }, { data: expenses, error: e3 }] = await Promise.all([
+    sb.from('clients').select('*').order('created_at'),
+    sb.from('payments').select('*').order('date'),
+    sb.from('expenses').select('*').order('date')
+  ]);
+
+  if(e1 || e2 || e3){
+    showToast('تعذر تحميل البيانات من قاعدة البيانات');
+    console.error(e1, e2, e3);
+  }
+
+  state.clients = (clients||[]).map(mapClient);
+  state.payments = (payments||[]).map(p=>({ id:p.id, clientId:p.client_id, date:p.date, method:p.method, amount:p.amount, note:p.note, currency: normCur(p.currency) }));
+  state.expenses = (expenses||[]).map(e=>({ id:e.id, clientId:e.client_id, date:e.date, description:e.description, amount:e.amount, note:e.note, work:e.work, currency: normCur(e.currency) }));
+
+  render();
+}
+
+function mapClient(c){
+  return {
+    id: c.id, name: c.name, phone: c.phone, note: c.note,
+    fees: Number(c.fees || 0),
+    feesCurrency: normCur(c.fees_currency)
+  };
+}
+
+/* ================= Currencies ================= */
+const CURRENCIES = {
+  SYP: { symbol: 'ل.س', label: 'ليرة سورية', decimals: 0 },
+  USD: { symbol: '$',   label: 'دولار أمريكي', decimals: 2 },
+  EUR: { symbol: '€',   label: 'يورو',        decimals: 2 }
+};
+function normCur(cur){ return (cur && CURRENCIES[cur]) ? cur : 'USD'; }
+function currencyOptions(selected){
+  return Object.keys(CURRENCIES).map(cur=>
+    `<option value="${cur}" ${cur===selected?'selected':''}>${CURRENCIES[cur].label}</option>`
+  ).join('');
+}
+
+/* ================= Helpers ================= */
+function fmt(n, currency){
+  currency = normCur(currency);
+  const c = CURRENCIES[currency];
+  const num = Number(n)||0;
+  const formatted = num.toLocaleString('en-US', {minimumFractionDigits:c.decimals, maximumFractionDigits:c.decimals});
+  return currency === 'SYP' ? (formatted + ' ' + c.symbol) : (c.symbol + formatted);
+}
+// تاريخ اليوم حسب التوقيت المحلي (مو UTC)
+function todayISO(){
+  const d = new Date();
+  d.setMinutes(d.getMinutes() - d.getTimezoneOffset());
+  return d.toISOString().slice(0,10);
+}
+function showToast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), 2200);
+}
+// الرصيد لكل عملة = الدفعات - المصروفات - الأتعاب (الأتعاب بتنحسب بعملتها فقط)
+function clientBalance(clientId){
+  const client = state.clients.find(c=>c.id===clientId);
+  const result = {};
+  Object.keys(CURRENCIES).forEach(cur=>{
+    const due = state.payments.filter(p=>p.clientId===clientId && normCur(p.currency)===cur).reduce((s,p)=>s+Number(p.amount||0),0);
+    const paid = state.expenses.filter(e=>e.clientId===clientId && normCur(e.currency)===cur).reduce((s,e)=>s+Number(e.amount||0),0);
+    const fees = (client && client.feesCurrency===cur) ? Number(client.fees||0) : 0;
+    result[cur] = { due, paid, fees, balance: due - paid - fees };
+  });
+  return result;
+}
+function isActiveCur(bb){ return bb.due!==0 || bb.paid!==0 || bb.fees!==0; }
+
+/* ================= Rendering: client list ================= */
+function render(){
+  renderClientList();
+  renderMain();
+}
+
+function renderClientList(){
+  const ul = document.getElementById('clientList');
+  if(state.clients.length===0){
+    ul.innerHTML = '<li class="empty-hint">لا يوجد موكلون بعد.<br>اضغط "إضافة موكل" للبدء.</li>';
+    return;
+  }
+  ul.innerHTML = state.clients.map(c=>{
+    const b = clientBalance(c.id);
+    const active = c.id === activeClientId ? 'active' : '';
+    const lines = Object.keys(CURRENCIES)
+      .filter(cur=>isActiveCur(b[cur]))
+      .map(cur=>{
+        const cls = b[cur].balance >= 0 ? 'pos' : 'neg';
+        return `<div class="c-balance ${cls}">الرصيد: ${fmt(b[cur].balance, cur)}</div>`;
+      }).join('');
+    return `<li class="client-item ${active}" onclick="selectClient('${c.id}')">
+      <div>
+        <div class="c-name">${escapeHtml(c.name)}</div>
+        ${lines || '<div class="c-balance">لا يوجد رصيد بعد</div>'}
+      </div>
+    </li>`;
+  }).join('');
+}
+
+function selectClient(id){
+  activeClientId = id;
+  activeTab = 'payments';
+  render();
+}
+
+/* ================= Rendering: main panel ================= */
+function renderMain(){
+  const main = document.getElementById('mainPanel');
+  const client = state.clients.find(c=>c.id===activeClientId);
+  if(!client){
+    main.innerHTML = `<div class="welcome">
+      <div class="welcome-mark">⚖</div>
+      <p>اختر موكلاً من القائمة لعرض حساباته، أو أضف موكلاً جديدًا لبدء تسجيل الدفعات والمصروفات الخاصة به.</p>
+      <button class="btn btn-navy" onclick="openClientModal()">+ إضافة موكل جديد</button>
+    </div>`;
+    return;
+  }
+  const b = clientBalance(client.id);
+
+  main.innerHTML = `
+    <div class="client-header">
+      <div>
+        <h2>${escapeHtml(client.name)}</h2>
+        <div class="client-meta">${client.phone ? 'هاتف: '+escapeHtml(client.phone)+' — ' : ''}${client.note ? escapeHtml(client.note) : 'لا توجد ملاحظات'}</div>
+      </div>
+      <div class="client-actions">
+        <button class="btn btn-brass btn-sm" onclick="openReport('${client.id}')">📄 تقرير كامل</button>
+        <button class="btn btn-ghost btn-sm" onclick="openExpenseReport('${client.id}')">🧾 تقرير المصروفات</button>
+        <button class="btn btn-ghost btn-sm" onclick="openClientModal('${client.id}')">✎ تعديل بيانات الموكل</button>
+        <button class="btn btn-danger-ghost" onclick="deleteClient('${client.id}')">حذف الموكل</button>
+      </div>
+    </div>
+
+    <div class="fees-bar">
+      <span class="fees-label">أتعاب القضية:</span>
+      <input id="feesAmount" type="number" step="0.01" min="0" placeholder="0"
+             value="${client.fees ? client.fees : ''}"
+             onkeydown="if(event.key==='Enter') saveFees('${client.id}')">
+      <select id="feesCurrency">${currencyOptions(client.feesCurrency)}</select>
+      <button class="btn btn-brass btn-sm" onclick="saveFees('${client.id}')">حفظ الأتعاب</button>
+    </div>
+
+    <table class="cur-balance-table">
+      <thead><tr><th>العملة</th><th>إجمالي الدفعات المستلمة</th><th>إجمالي المصروفات</th><th>الأتعاب</th><th>الرصيد المتبقي</th></tr></thead>
+      <tbody>
+        ${Object.keys(CURRENCIES).map(cur=>{
+          const bb = b[cur];
+          const balCls = bb.balance >= 0 ? 'bal-pos' : 'bal-neg';
+          return `<tr>
+            <td class="cur-name">${CURRENCIES[cur].label}</td>
+            <td class="amount-cell due">${fmt(bb.due, cur)}</td>
+            <td class="amount-cell paid">${fmt(bb.paid, cur)}</td>
+            <td class="amount-cell fees">${fmt(bb.fees, cur)}</td>
+            <td class="amount-cell ${balCls}">${fmt(bb.balance, cur)}</td>
+          </tr>`;
+        }).join('')}
+      </tbody>
+    </table>
+
+    <div class="tabs">
+      <div class="tab ${activeTab==='payments'?'active':''}" onclick="setTab('payments')">الدفعات المستلمة</div>
+      <div class="tab ${activeTab==='expenses'?'active':''}" onclick="setTab('expenses')">المصروفات</div>
+    </div>
+
+    <div class="tab-body" id="tabBody"></div>
+  `;
+  renderTabBody();
+}
+
+function setTab(tab){ activeTab = tab; renderMain(); }
+
+function renderTabBody(){
+  const body = document.getElementById('tabBody');
+  const client = state.clients.find(c=>c.id===activeClientId);
+  if(!client) return;
+
+  if(activeTab === 'payments'){
+    const rows = state.payments.filter(p=>p.clientId===client.id).sort((a,b)=>(b.date||'').localeCompare(a.date||''));
+    body.innerHTML = `
+      <div class="entry-form">
+        <input type="date" id="pDate" value="${todayISO()}">
+        <input type="text" id="pMethod" placeholder="طريقة الدفع (نقدًا، تحويل...)">
+        <input type="number" id="pAmount" placeholder="المبلغ" step="0.01">
+        <select id="pCurrency">${currencyOptions('SYP')}</select>
+        <input type="text" id="pNote" placeholder="ملاحظة">
+        <button class="btn btn-navy btn-sm" onclick="addPayment('${client.id}')">+ إضافة دفعة</button>
+      </div>
+      ${renderTable(rows, 'payment')}
+    `;
+  } else {
+    const rows = state.expenses.filter(e=>e.clientId===client.id).sort((a,b)=>(b.date||'').localeCompare(a.date||''));
+    body.innerHTML = `
+      <div class="entry-form">
+        <input type="date" id="eDate" value="${todayISO()}">
+        <input type="text" id="eDesc" placeholder="عنوان العمل / المصروف (مختصر)">
+        <input type="number" id="eAmount" placeholder="المبلغ" step="0.01">
+        <select id="eCurrency">${currencyOptions('SYP')}</select>
+        <input type="text" id="eNote" placeholder="ملاحظة قصيرة (اختياري)">
+        <textarea id="eWork" rows="2" placeholder="شرح تفصيلي للعمل الذي تم إنجازه مقابل هذا المبلغ (يظهر في التقرير)" style="grid-column:1/-1;font-family:inherit;font-size:13px;padding:9px 10px;border:1px solid var(--line);border-radius:4px;resize:vertical;"></textarea>
+        <button class="btn btn-navy btn-sm" onclick="addExpense('${client.id}')">+ إضافة مصروف</button>
+      </div>
+      ${renderExpenseTable(rows)}
+    `;
+  }
+}
+
+function renderTable(rows, type){
+  if(rows.length===0){
+    return `<div class="empty-row">لا توجد سجلات بعد.</div>`;
+  }
+  return `
+    <table>
+      <thead><tr>
+        <th>التاريخ</th><th>طريقة الدفع</th><th>ملاحظة</th><th>العملة</th><th>المبلغ</th><th></th>
+      </tr></thead>
+      <tbody>
+        ${rows.map(r=>`
+          <tr>
+            <td>${r.date||'-'}</td>
+            <td>${escapeHtml(r.method || '-')}</td>
+            <td class="note-cell">${escapeHtml(r.note||'')}</td>
+            <td class="cur-tag">${CURRENCIES[normCur(r.currency)].label}</td>
+            <td class="amount-cell due">${fmt(r.amount, r.currency)}</td>
+            <td>
+              <div class="row-actions">
+                <button class="edit-link" onclick="openPaymentEditModal('${r.id}')">تعديل</button>
+                <button class="del-link" onclick="deleteEntry('${type}','${r.id}')">حذف</button>
+              </div>
+            </td>
+          </tr>
+        `).join('')}
+      </tbody>
+    </table>
+  `;
+}
+
+function renderExpenseTable(rows){
+  if(rows.length===0){
+    return `<div class="empty-row">لا توجد سجلات بعد.</div>`;
+  }
+  return rows.map(r=>`
+    <div class="expense-block">
+      <div class="eb-top">
+        <div>
+          <div class="eb-title">${escapeHtml(r.description || 'بدون عنوان')}</div>
+          <div class="eb-date">${r.date||'-'}${r.note ? ' — '+escapeHtml(r.note) : ''}</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;">
+          <div class="eb-amount">${fmt(r.amount, r.currency)}</div>
+          <div class="row-actions">
+            <button class="edit-link" onclick="openExpenseEditModal('${r.id}')">تعديل</button>
+            <button class="del-link" onclick="deleteEntry('expense','${r.id}')">حذف</button>
+          </div>
+        </div>
+      </div>
+      ${r.work ? `<div class="work-detail"><div class="wd-label">شرح العمل المُنجز</div>${escapeHtml(r.work)}</div>` : ''}
+    </div>
+  `).join('');
+}
+
+/* ================= Fees ================= */
+async function saveFees(clientId){
+  const raw = document.getElementById('feesAmount').value;
+  const fees = raw === '' ? 0 : parseFloat(raw);
+  const fees_currency = normCur(document.getElementById('feesCurrency').value);
+  if(isNaN(fees) || fees < 0){ showToast('الرجاء إدخال مبلغ أتعاب صحيح'); return; }
+
+  const { error } = await sb.from('clients').update({ fees, fees_currency }).eq('id', clientId);
+  if(error){ showToast('تعذر حفظ الأتعاب'); console.error(error); return; }
+
+  const c = state.clients.find(cl=>cl.id===clientId);
+  if(c){ c.fees = fees; c.feesCurrency = fees_currency; }
+  render();
+  showToast('تم حفظ الأتعاب');
+}
+
+/* ================= CRUD ================= */
+function openClientModal(id){
+  editingClientId = id || null;
+  const isEdit = !!editingClientId;
+  document.getElementById('clientModalTitle').textContent = isEdit ? 'تعديل بيانات الموكل' : 'إضافة موكل جديد';
+  document.getElementById('clientModalSaveBtn').textContent = isEdit ? 'حفظ التعديلات' : 'حفظ';
+
+  if(isEdit){
+    const c = state.clients.find(cl=>cl.id===editingClientId);
+    if(!c) return;
+    document.getElementById('newClientName').value = c.name || '';
+    document.getElementById('newClientPhone').value = c.phone || '';
+    document.getElementById('newClientFees').value = c.fees || '';
+    document.getElementById('newClientFeesCurrency').value = c.feesCurrency;
+    document.getElementById('newClientNote').value = c.note || '';
+  } else {
+    document.getElementById('newClientName').value='';
+    document.getElementById('newClientPhone').value='';
+    document.getElementById('newClientFees').value='';
+    document.getElementById('newClientFeesCurrency').value='USD';
+    document.getElementById('newClientNote').value='';
+  }
+  document.getElementById('clientModalOverlay').classList.add('show');
+}
+function closeClientModal(){
+  document.getElementById('clientModalOverlay').classList.remove('show');
+  editingClientId = null;
+}
+
+async function saveClientModal(){
+  const name = document.getElementById('newClientName').value.trim();
+  if(!name){ showToast('الرجاء إدخال اسم الموكل'); return; }
+  const phone = document.getElementById('newClientPhone').value.trim();
+  const note = document.getElementById('newClientNote').value.trim();
+  const feesRaw = document.getElementById('newClientFees').value;
+  const fees = feesRaw === '' ? 0 : parseFloat(feesRaw);
+  const fees_currency = normCur(document.getElementById('newClientFeesCurrency').value);
+  if(isNaN(fees) || fees < 0){ showToast('الرجاء إدخال مبلغ أتعاب صحيح'); return; }
+
+  if(editingClientId){
+    const { data, error } = await sb.from('clients')
+      .update({ name, phone, note, fees, fees_currency })
+      .eq('id', editingClientId)
+      .select().single();
+
+    if(error){ showToast('تعذر حفظ التعديلات'); console.error(error); return; }
+
+    const idx = state.clients.findIndex(cl=>cl.id===editingClientId);
+    if(idx>=0) state.clients[idx] = mapClient(data);
+    closeClientModal();
+    render();
+    showToast('تم تعديل بيانات الموكل');
+  } else {
+    const { data, error } = await sb.from('clients')
+      .insert({ user_id: currentUser.id, name, phone, note, fees, fees_currency })
+      .select().single();
+
+    if(error){ showToast('تعذر حفظ الموكل'); console.error(error); return; }
+
+    state.clients.push(mapClient(data));
+    closeClientModal();
+    activeClientId = data.id;
+    render();
+    showToast('تمت إضافة الموكل');
+  }
+}
+
+/* ---- Edit payment ---- */
+function openPaymentEditModal(id){
+  const p = state.payments.find(x=>x.id===id);
+  if(!p) return;
+  editingPaymentId = id;
+  document.getElementById('editPDate').value = p.date || todayISO();
+  document.getElementById('editPMethod').value = p.method || '';
+  document.getElementById('editPAmount').value = p.amount || '';
+  document.getElementById('editPCurrency').value = normCur(p.currency);
+  document.getElementById('editPNote').value = p.note || '';
+  document.getElementById('paymentModalOverlay').classList.add('show');
+}
+function closePaymentEditModal(){
+  document.getElementById('paymentModalOverlay').classList.remove('show');
+  editingPaymentId = null;
+}
+async function savePaymentEdit(){
+  if(!editingPaymentId) return;
+  const date = document.getElementById('editPDate').value || todayISO();
+  const method = document.getElementById('editPMethod').value.trim();
+  const amount = parseFloat(document.getElementById('editPAmount').value);
+  const currency = normCur(document.getElementById('editPCurrency').value);
+  const note = document.getElementById('editPNote').value.trim();
+  if(!amount || amount<=0){ showToast('الرجاء إدخال مبلغ صحيح'); return; }
+
+  const { data, error } = await sb.from('payments')
+    .update({ date, method, amount, currency, note })
+    .eq('id', editingPaymentId)
+    .select().single();
+
+  if(error){ showToast('تعذر حفظ التعديلات'); console.error(error); return; }
+
+  const p = state.payments.find(x=>x.id===editingPaymentId);
+  if(p){ p.date = data.date; p.method = data.method; p.amount = data.amount; p.currency = normCur(data.currency); p.note = data.note; }
+  closePaymentEditModal();
+  render();
+  showToast('تم تعديل الدفعة');
+}
+
+/* ---- Edit expense ---- */
+function openExpenseEditModal(id){
+  const e = state.expenses.find(x=>x.id===id);
+  if(!e) return;
+  editingExpenseId = id;
+  document.getElementById('editEDate').value = e.date || todayISO();
+  document.getElementById('editEDesc').value = e.description || '';
+  document.getElementById('editEAmount').value = e.amount || '';
+  document.getElementById('editECurrency').value = normCur(e.currency);
+  document.getElementById('editENote').value = e.note || '';
+  document.getElementById('editEWork').value = e.work || '';
+  document.getElementById('expenseModalOverlay').classList.add('show');
+}
+function closeExpenseEditModal(){
+  document.getElementById('expenseModalOverlay').classList.remove('show');
+  editingExpenseId = null;
+}
+async function saveExpenseEdit(){
+  if(!editingExpenseId) return;
+  const date = document.getElementById('editEDate').value || todayISO();
+  const description = document.getElementById('editEDesc').value.trim();
+  const amount = parseFloat(document.getElementById('editEAmount').value);
+  const currency = normCur(document.getElementById('editECurrency').value);
+  const note = document.getElementById('editENote').value.trim();
+  const work = document.getElementById('editEWork').value.trim();
+  if(!amount || amount<=0){ showToast('الرجاء إدخال مبلغ صحيح'); return; }
+
+  const { data, error } = await sb.from('expenses')
+    .update({ date, description, amount, currency, note, work })
+    .eq('id', editingExpenseId)
+    .select().single();
+
+  if(error){ showToast('تعذر حفظ التعديلات'); console.error(error); return; }
+
+  const e = state.expenses.find(x=>x.id===editingExpenseId);
+  if(e){ e.date = data.date; e.description = data.description; e.amount = data.amount; e.currency = normCur(data.currency); e.note = data.note; e.work = data.work; }
+  closeExpenseEditModal();
+  render();
+  showToast('تم تعديل المصروف');
+}
+
+async function deleteClient(id){
+  if(!confirm('هل تريد حذف هذا الموكل وجميع دفعاته ومصروفاته؟')) return;
+
+  const { error } = await sb.from('clients').delete().eq('id', id);
+  if(error){ showToast('تعذر حذف الموكل'); console.error(error); return; }
+
+  state.clients = state.clients.filter(c=>c.id!==id);
+  state.payments = state.payments.filter(p=>p.clientId!==id);
+  state.expenses = state.expenses.filter(e=>e.clientId!==id);
+  if(activeClientId===id) activeClientId=null;
+  render();
+  showToast('تم حذف الموكل');
+}
+
+async function addPayment(clientId){
+  const date = document.getElementById('pDate').value || todayISO();
+  const method = document.getElementById('pMethod').value.trim();
+  const amount = parseFloat(document.getElementById('pAmount').value);
+  const currency = normCur(document.getElementById('pCurrency').value);
+  const note = document.getElementById('pNote').value.trim();
+  if(!amount || amount<=0){ showToast('الرجاء إدخال مبلغ صحيح'); return; }
+
+  const { data, error } = await sb.from('payments')
+    .insert({ user_id: currentUser.id, client_id: clientId, date, method, amount, currency, note })
+    .select().single();
+
+  if(error){ showToast('تعذر حفظ الدفعة'); console.error(error); return; }
+
+  state.payments.push({ id: data.id, clientId, date, method, amount, currency, note });
+  render();
+  showToast('تمت إضافة الدفعة');
+}
+
+async function addExpense(clientId){
+  const date = document.getElementById('eDate').value || todayISO();
+  const description = document.getElementById('eDesc').value.trim();
+  const amount = parseFloat(document.getElementById('eAmount').value);
+  const currency = normCur(document.getElementById('eCurrency').value);
+  const note = document.getElementById('eNote').value.trim();
+  const work = document.getElementById('eWork').value.trim();
+  if(!amount || amount<=0){ showToast('الرجاء إدخال مبلغ صحيح'); return; }
+
+  const { data, error } = await sb.from('expenses')
+    .insert({ user_id: currentUser.id, client_id: clientId, date, description, amount, currency, note, work })
+    .select().single();
+
+  if(error){ showToast('تعذر حفظ المصروف'); console.error(error); return; }
+
+  state.expenses.push({ id: data.id, clientId, date, description, amount, currency, note, work });
+  render();
+  showToast('تمت إضافة المصروف');
+}
+
+async function deleteEntry(type, id){
+  if(!confirm('هل تريد حذف هذا السجل؟ لا يمكن التراجع عن الحذف.')) return;
+
+  const table = type === 'payment' ? 'payments' : 'expenses';
+  const { error } = await sb.from(table).delete().eq('id', id);
+  if(error){ showToast('تعذر الحذف'); console.error(error); return; }
+
+  if(type==='payment'){ state.payments = state.payments.filter(p=>p.id!==id); }
+  else { state.expenses = state.expenses.filter(e=>e.id!==id); }
+  render();
+  showToast('تم الحذف');
+}
+
+/* ================= Report helpers ================= */
+function currencySummaryBlocks(b){
+  const activeCurs = Object.keys(CURRENCIES).filter(cur=>isActiveCur(b[cur]));
+  if(activeCurs.length===0){
+    return `<div class="empty-row">لا توجد بيانات مالية بعد.</div>`;
+  }
+  return activeCurs.map(cur=>{
+    const bb = b[cur];
+    return `<div class="report-summary" style="margin-top:14px;">
+      <div><div class="lbl">إجمالي الدفعات (${CURRENCIES[cur].label})</div><div class="val" style="color:var(--green)">${fmt(bb.due,cur)}</div></div>
+      <div><div class="lbl">إجمالي المصروفات</div><div class="val" style="color:var(--brand-800)">${fmt(bb.paid,cur)}</div></div>
+      <div><div class="lbl">الأتعاب</div><div class="val" style="color:var(--brass)">${fmt(bb.fees,cur)}</div></div>
+      <div><div class="lbl">الرصيد المتبقي</div><div class="val" style="color:${bb.balance>=0?'var(--green)':'var(--red)'}">${fmt(bb.balance,cur)}</div></div>
+    </div>`;
+  }).join('');
+}
+
+/* ================= Report ================= */
+function openReport(clientId){
+  const client = state.clients.find(c=>c.id===clientId);
+  if(!client) return;
+  const payments = state.payments.filter(p=>p.clientId===clientId).sort((a,b)=>(a.date||'').localeCompare(b.date||''));
+  const expenses = state.expenses.filter(e=>e.clientId===clientId).sort((a,b)=>(a.date||'').localeCompare(b.date||''));
+  const b = clientBalance(clientId);
+  const lawyerName = document.getElementById('lawyerName').value.trim() || 'المحامي';
+  const dateStr = new Date().toLocaleDateString(DATE_LOCALE, { year:'numeric', month:'long', day:'numeric' });
+
+  const content = `
+    <div class="r-top">
+      <div class="r-brand">${logoImgTag()}<div class="r-brand-text">${escapeHtml(lawyerName)}<small>المحامي مهند محمد نطفجي</small></div></div>
+      <div class="r-date">تاريخ التقرير<br>${dateStr}</div>
+    </div>
+    <p style="font-size:13.5px;">الموكل: <strong>${escapeHtml(client.name)}</strong>${client.phone ? ' — هاتف: '+escapeHtml(client.phone) : ''}</p>
+
+    <h4>الدفعات المستلمة</h4>
+    ${payments.length ? `<table><thead><tr><th>التاريخ</th><th>طريقة الدفع</th><th>ملاحظة</th><th>العملة</th><th>المبلغ</th></tr></thead>
+      <tbody>${payments.map(p=>`<tr><td>${p.date||'-'}</td><td>${escapeHtml(p.method||'-')}</td><td>${escapeHtml(p.note||'')}</td><td>${CURRENCIES[normCur(p.currency)].label}</td><td class="amount-cell due">${fmt(p.amount,p.currency)}</td></tr>`).join('')}</tbody></table>`
+      : '<div class="empty-row">لا توجد دفعات مسجلة.</div>'}
+
+    <h4>المصروفات والأعمال المنجزة</h4>
+    ${expenses.length ? expenses.map(e=>`
+      <div class="expense-block">
+        <div class="eb-top">
+          <div><div class="eb-title">${escapeHtml(e.description || 'بدون عنوان')}</div><div class="eb-date">${e.date||'-'}${e.note ? ' — '+escapeHtml(e.note) : ''}</div></div>
+          <div class="eb-amount">${fmt(e.amount,e.currency)}</div>
+        </div>
+        ${e.work ? `<div class="work-detail"><div class="wd-label">شرح العمل المُنجز</div>${escapeHtml(e.work)}</div>` : ''}
+      </div>
+    `).join('') : '<div class="empty-row">لا توجد مصروفات مسجلة.</div>'}
+
+    <h4>الملخص المالي</h4>
+    ${currencySummaryBlocks(b)}
+
+    <div class="r-footer-note">تم إعداد هذا التقرير آليًا لأغراض المتابعة المالية بين المحامي والموكل، ولا يغني عن أي مستند رسمي أو فاتورة معتمدة عند الحاجة.</div>
+    ${contactFooterHtml()}
+  `;
+  document.getElementById('reportContent').innerHTML = content;
+  document.getElementById('reportOverlay').dataset.clientId = clientId;
+  document.getElementById('reportOverlay').dataset.reportType = 'full';
+  document.getElementById('reportOverlay').classList.add('show');
+}
+
+function openExpenseReport(clientId){
+  const client = state.clients.find(c=>c.id===clientId);
+  if(!client) return;
+  const expenses = state.expenses.filter(e=>e.clientId===clientId).sort((a,b)=>(a.date||'').localeCompare(b.date||''));
+  const b = clientBalance(clientId);
+  const lawyerName = document.getElementById('lawyerName').value.trim() || 'المحامي';
+  const dateStr = new Date().toLocaleDateString(DATE_LOCALE, { year:'numeric', month:'long', day:'numeric' });
+
+  const activeCurs = Object.keys(CURRENCIES).filter(cur=>b[cur].paid!==0 || b[cur].fees!==0);
+  const totalsHtml = activeCurs.length===0
+    ? `<div class="report-summary" style="grid-template-columns:1fr;"><div><div class="lbl">إجمالي المصروفات والأتعاب</div><div class="val" style="color:var(--brand-800)">لا يوجد</div></div></div>`
+    : activeCurs.map(cur=>`<div class="report-summary" style="grid-template-columns:repeat(3,1fr);margin-top:14px;">
+        <div><div class="lbl">إجمالي المصروفات (${CURRENCIES[cur].label})</div><div class="val" style="color:var(--brand-800)">${fmt(b[cur].paid,cur)}</div></div>
+        <div><div class="lbl">الأتعاب</div><div class="val" style="color:var(--brass)">${fmt(b[cur].fees,cur)}</div></div>
+        <div><div class="lbl">المجموع</div><div class="val" style="color:var(--brand-900)">${fmt(b[cur].paid + b[cur].fees,cur)}</div></div>
+      </div>`).join('');
+
+  const content = `
+    <div class="r-top">
+      <div class="r-brand">${logoImgTag()}<div class="r-brand-text">${escapeHtml(lawyerName)}<small>تقرير مصروفات وأعمال منجزة</small></div></div>
+      <div class="r-date">تاريخ التقرير<br>${dateStr}</div>
+    </div>
+    <p style="font-size:13.5px;">الموكل: <strong>${escapeHtml(client.name)}</strong>${client.phone ? ' — هاتف: '+escapeHtml(client.phone) : ''}</p>
+
+    <h4>تفاصيل الأعمال والمصروفات</h4>
+    ${expenses.length ? expenses.map((e,i)=>`
+      <div class="expense-block">
+        <div class="eb-top">
+          <div><div class="eb-title">${i+1}. ${escapeHtml(e.description || 'بدون عنوان')}</div><div class="eb-date">${e.date||'-'}${e.note ? ' — '+escapeHtml(e.note) : ''}</div></div>
+          <div class="eb-amount">${fmt(e.amount,e.currency)}</div>
+        </div>
+        ${e.work ? `<div class="work-detail"><div class="wd-label">شرح العمل المُنجز</div>${escapeHtml(e.work)}</div>` : '<div class="work-detail" style="border-color:var(--line);color:var(--ink-soft);">لم يُضف شرح تفصيلي لهذا البند.</div>'}
+      </div>
+    `).join('') : '<div class="empty-row">لا توجد مصروفات مسجلة لهذا الموكل.</div>'}
+
+    <h4>الإجمالي</h4>
+    ${totalsHtml}
+
+    <div class="r-footer-note">يوضح هذا التقرير تفصيل الأعمال والمصروفات المُنجزة لصالح الموكل، وتم إعداده آليًا لأغراض المتابعة والشفافية المالية.</div>
+    ${contactFooterHtml()}
+  `;
+  document.getElementById('reportContent').innerHTML = content;
+  document.getElementById('reportOverlay').dataset.clientId = clientId;
+  document.getElementById('reportOverlay').dataset.reportType = 'expenses';
+  document.getElementById('reportOverlay').classList.add('show');
+}
+
+function logoImgTag(){
+  return LOGO_DATA_URI ? `<img src="${LOGO_DATA_URI}" alt="شعار المكتب">` : '';
+}
+
+function contactFooterHtml(){
+  return `
+    <div class="r-contact-footer">
+      <div class="rc-left">
+        <strong>Levant Law Firm | ليفانت للمحاماة</strong><br>
+        دمشق، سوريا<br>
+        اوقات العمل: 9:00 AM – 6:00 PM
+      </div>
+      <div class="rc-right">
+        <a href="https://www.levantlawfirm.com">www.levantlawfirm.com</a><br>
+        info@levantlawfirm.com<br>
+        00963956010628
+      </div>
+    </div>
+  `;
+}
+
+function closeReport(){ document.getElementById('reportOverlay').classList.remove('show'); }
+
+function copyReportText(){
+  const overlay = document.getElementById('reportOverlay');
+  const clientId = overlay.dataset.clientId;
+  const reportType = overlay.dataset.reportType || 'full';
+  const client = state.clients.find(c=>c.id===clientId);
+  if(!client) return;
+  const payments = state.payments.filter(p=>p.clientId===clientId).sort((a,b)=>(a.date||'').localeCompare(b.date||''));
+  const expenses = state.expenses.filter(e=>e.clientId===clientId).sort((a,b)=>(a.date||'').localeCompare(b.date||''));
+  const b = clientBalance(clientId);
+  const lawyerName = document.getElementById('lawyerName').value.trim() || 'المحامي';
+  const today = new Date().toLocaleDateString(DATE_LOCALE);
+  let txt = '';
+
+  const contactBlock = `\n\n---\nLevant Law Firm | ليفانت للمحاماة\nدمشق، سوريا\nwww.levantlawfirm.com | info@levantlawfirm.com | 00963956010628\nاوقات العمل: 9:00 AM – 6:00 PM`;
+
+  if(reportType === 'expenses'){
+    txt = `تقرير مصروفات وأعمال منجزة — ${lawyerName}\nالموكل: ${client.name}\nتاريخ: ${today}\n\n`;
+    txt += expenses.length ? expenses.map((e,i)=>`${i+1}. ${e.description||'بدون عنوان'} — ${e.date||'-'} — ${fmt(e.amount,e.currency)}${e.note?'\n   ملاحظة: '+e.note:''}${e.work?'\n   شرح العمل: '+e.work:''}`).join('\n\n') : 'لا توجد مصروفات مسجلة.';
+    const totalLines = Object.keys(CURRENCIES)
+      .filter(cur=>b[cur].paid!==0 || b[cur].fees!==0)
+      .map(cur=>`(${CURRENCIES[cur].label}) — المصروفات: ${fmt(b[cur].paid,cur)} | الأتعاب: ${fmt(b[cur].fees,cur)} | المجموع: ${fmt(b[cur].paid + b[cur].fees,cur)}`)
+      .join('\n');
+    txt += `\n\n${totalLines || 'لا توجد مصروفات مسجلة.'}`;
+    txt += contactBlock;
+  } else {
+    txt = `تقرير حساب — ${lawyerName}\nالموكل: ${client.name}\nتاريخ: ${today}\n\n`;
+    txt += `الدفعات المستلمة:\n`;
+    txt += payments.length ? payments.map(p=>`- ${p.date||'-'} | ${p.method||'-'} | ${fmt(p.amount,p.currency)}${p.note?' | '+p.note:''}`).join('\n') : '- لا توجد دفعات';
+    txt += `\n\nالمصروفات والأعمال المنجزة:\n`;
+    txt += expenses.length ? expenses.map(e=>`- ${e.date||'-'} | ${e.description||'-'} | ${fmt(e.amount,e.currency)}${e.note?' | ملاحظة: '+e.note:''}${e.work?'\n  شرح العمل: '+e.work:''}`).join('\n') : '- لا توجد مصروفات';
+    const summaryLines = Object.keys(CURRENCIES)
+      .filter(cur=>isActiveCur(b[cur]))
+      .map(cur=>`(${CURRENCIES[cur].label}) — إجمالي الدفعات: ${fmt(b[cur].due,cur)} | إجمالي المصروفات: ${fmt(b[cur].paid,cur)} | الأتعاب: ${fmt(b[cur].fees,cur)} | الرصيد المتبقي: ${fmt(b[cur].balance,cur)}`)
+      .join('\n');
+    txt += `\n\n${summaryLines || 'لا توجد بيانات مالية بعد.'}`;
+    txt += contactBlock;
+  }
+
+  navigator.clipboard.writeText(txt).then(()=>showToast('تم نسخ التقرير كنص')).catch(()=>showToast('تعذر النسخ'));
+}
+
+/* ================= Utils ================= */
+function escapeHtml(str){
+  if(str===undefined || str===null) return '';
+  return String(str).replace(/[&<>"']/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+}
+
+initAuth();
+</script>
+</body>
+</html>
